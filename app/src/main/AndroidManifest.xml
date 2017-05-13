@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.android.angrybird">
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <application
+        android:name=".AngryBirdApp"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.AddEditUserActivity" />
+        <activity android:name=".activity.AddEditItemActivity" />
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/AppThemeNoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.UserListActivity"
+            android:label="Users List"/>
+        <activity android:name=".activity.ItemListActivity"
+            android:label="Item List"/>
+        <activity android:name=".activity.ItemDetailActivity"
+            android:label="Item Detail"/>
+        <activity android:name=".activity.AuthenticationActivity"
+            android:label="Login"/>
+    </application>
+
+</manifest>

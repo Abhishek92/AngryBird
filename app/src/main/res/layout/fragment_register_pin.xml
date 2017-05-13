@@ -1,0 +1,55 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:layout_gravity="center_vertical"
+            tools:context="com.android.angrybird.fragment.RegisterPinFragment">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:text="Set up your pin"/>
+
+            <EditText
+                android:id="@+id/pinEt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="4-digit pin"
+                android:layout_marginTop="16dp"
+                android:inputType="numberPassword"
+                android:maxLength="4"/>
+
+            <EditText
+                android:id="@+id/confirmPinEt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Confirm pin"
+                android:maxLength="4"
+                android:inputType="numberPassword"
+                android:layout_marginTop="8dp"/>
+
+            <Button
+                android:id="@+id/submitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Submit"/>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+</layout>
+

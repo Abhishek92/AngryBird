@@ -1,0 +1,42 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:layout_gravity="center_vertical"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:textColor="@android:color/black"
+                android:text="Confirm your pin"/>
+            <EditText
+                android:id="@+id/pinEt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="4-digit pin"
+                android:inputType="numberPassword"
+                android:layout_marginTop="16dp"
+                android:maxLength="4"/>
+
+            <Button
+                android:id="@+id/submitBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Submit"/>
+
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</layout>
