@@ -26,6 +26,19 @@
                 app:srcCompat="@drawable/ic_account_circle_black_24dp"
                 android:scaleType="centerCrop"/>
 
+            <HorizontalScrollView
+                android:id="@+id/horizontalSv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="10dp">
+                <LinearLayout
+                    android:id="@+id/img_container"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:orientation="horizontal"/>
+            </HorizontalScrollView>
+
             <EditText
                 android:id="@+id/dateEt"
                 android:layout_width="match_parent"

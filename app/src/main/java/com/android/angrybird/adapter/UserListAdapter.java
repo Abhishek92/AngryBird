@@ -1,8 +1,10 @@
 package com.android.angrybird.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -85,9 +87,20 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                                 mContext.startActivity(intent);
                                 return true;
                             case R.id.delete:
-                                DBManager.INSTANCE.getDaoSession().getUserDao().deleteByKey(user.getUserId());
-                                if(null != mListener)
-                                    mListener.onItemDeleted();
+                                new AlertDialog.Builder(mContext).setMessage("Do you want to delete this item?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        DBManager.INSTANCE.getDaoSession().getUserDao().deleteByKey(user.getUserId());
+                                        if(null != mListener)
+                                            mListener.onItemDeleted();
+                                    }
+                                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                }).show();
+
                                 return true;
                         }
                         return true;

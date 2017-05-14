@@ -33,6 +33,7 @@
             android:label="Item Detail"/>
         <activity android:name=".activity.AuthenticationActivity"
             android:label="Login"/>
+
     </application>
 
 </manifest>

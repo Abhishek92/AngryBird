@@ -1,12 +1,12 @@
 package com.android.angrybird.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.v7.widget.PopupMenu;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -16,7 +16,6 @@ import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.Item;
 import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.databinding.ItemListLayoutBinding;
-import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
 
@@ -60,45 +59,41 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             }
         });
         ItemAsset itemAsset = DBManager.INSTANCE.getDaoSession().getItemAssetDao().load(item.getItemId());
-        Glide.with(mContext).load(itemAsset.getImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
-
-        setPopupMenu(holder, item, itemAsset);
+       // Glide.with(mContext).load(itemAsset.getImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
+        setEditAndDelete(holder, item, itemAsset);
     }
 
-    private void setPopupMenu(final ViewHolder holder, final Item items, final ItemAsset itemAsset) {
-        holder.binding.popupMenu.setOnClickListener(new View.OnClickListener() {
+    private void setEditAndDelete(final ViewHolder holder, final Item items, final ItemAsset itemAsset) {
+        holder.binding.edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Creating the instance of PopupMenu
-                PopupMenu popup = new PopupMenu(mContext, holder.binding.popupMenu);
-                //Inflating the Popup using xml file
-                popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
-
-                //registering popup with OnMenuItemClickListener
-                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    public boolean onMenuItemClick(MenuItem item) {
-                        switch (item.getItemId())
-                        {
-                            case R.id.edit:
-                                Intent intent = new Intent(mContext, AddEditItemActivity.class);
-                                intent.putExtra(AddEditItemActivity.KEY_ITEM_DATA, Parcels.wrap(items));
-                                intent.putExtra(AddEditItemActivity.KEY_ITEM_ASSET_DATA, Parcels.wrap(itemAsset));
-                                mContext.startActivity(intent);
-                                return true;
-                            case R.id.delete:
-                                DBManager.INSTANCE.getDaoSession().getItemDao().deleteByKey(items.getItemId());
-                                DBManager.INSTANCE.getDaoSession().getItemAssetDao().deleteByKey(itemAsset.getItemAssetId());
-                                if(null != mListener)
-                                    mListener.onItemDeleted();
-                                return true;
-                        }
-                        return true;
-                    }
-                });
-
-                popup.show();//showing popup menu
+                Intent intent = new Intent(mContext, AddEditItemActivity.class);
+                intent.putExtra(AddEditItemActivity.KEY_ITEM_DATA, Parcels.wrap(items));
+                intent.putExtra(AddEditItemActivity.KEY_ITEM_ASSET_DATA, Parcels.wrap(itemAsset));
+                mContext.startActivity(intent);
             }
         });
+
+        holder.binding.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(mContext).setMessage("Do you want to delete this item?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        DBManager.INSTANCE.getDaoSession().getItemDao().deleteByKey(items.getItemId());
+                        DBManager.INSTANCE.getDaoSession().getItemAssetDao().deleteByKey(itemAsset.getItemAssetId());
+                        if(null != mListener)
+                            mListener.onItemDeleted();
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.cancel();
+                    }
+                }).show();
+            }
+        });
+
     }
 
     @Override

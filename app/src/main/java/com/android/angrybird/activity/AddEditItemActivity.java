@@ -1,8 +1,12 @@
 package com.android.angrybird.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.angrybird.R;
@@ -12,9 +16,14 @@ import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.databinding.ActivityAddEditItemBinding;
 import com.android.angrybird.fragment.DatePickerFragment;
 import com.android.angrybird.util.DateTimeUtil;
+import com.android.angrybird.util.FileUtils;
+import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding> implements DatePickerFragment.IDateSetListener {
 
@@ -32,21 +41,24 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     private String mImageFilePath;
     private Long userId;
     private Item item;
-    private ItemAsset itemAsset;
     private ActionBar mActionBar;
+    private List<ItemAsset> mItemAssetList = new ArrayList<>();
+    private List<String> mImageList = new ArrayList<>();
 
     @Override
     protected void onCreateCustom(ActivityAddEditItemBinding viewBinding) {
         this.viewBinding = viewBinding;
         userId = getIntent().getLongExtra(KEY_USER_ID, 0);
         item = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ITEM_DATA));
-        itemAsset = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ITEM_ASSET_DATA));
+        if(null != item) {
+            mItemAssetList = DBManager.INSTANCE.getDaoSession().getItemAssetDao().queryRaw("WHERE ITEM_ID = ?", String.valueOf(item.getItemId()));
+        }
         mActionBar = getSupportActionBar();
         viewBinding.submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(null != item && null != itemAsset)
+                if(null != item && Utils.listNotNull(mItemAssetList))
                     updateItemToDatabase();
                 else
                     addItemToDatabase();
@@ -73,7 +85,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
 
     private void setItemDataForEdit()
     {
-        if(null != itemAsset && null != item)
+        if(Utils.listNotNull(mItemAssetList) && null != item)
         {
             if(null != mActionBar)
                 mActionBar.setTitle("Edit Item");
@@ -83,7 +95,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             viewBinding.debitAmtEt.setText(item.getDebitAmount());
             viewBinding.creditWeightEt.setText(item.getCrediWeight());
             viewBinding.debitWeightEt.setText(item.getDebitWeight());
-            Glide.with(this).load(itemAsset.getImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.itemImage);
+            setImagesForEdit();
         }
         else {
             if(null != mActionBar)
@@ -102,9 +114,8 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             item.setDebitAmount(mDebitAmt);
             item.setCrediWeight(mCreditWgt);
             item.setDebitWeight(mDebitWgt);
-            itemAsset.setImagePath(mImageFilePath);
             DBManager.INSTANCE.getDaoSession().getItemDao().update(item);
-            DBManager.INSTANCE.getDaoSession().getItemAssetDao().update(itemAsset);
+            updateImages(item.getItemId());
             finish();
         }
     }
@@ -124,12 +135,30 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             item.setDebitWeight(mDebitWgt);
 
             Long id = DBManager.INSTANCE.getDaoSession().getItemDao().insert(item);
-            ItemAsset itemAsset = new ItemAsset();
-            itemAsset.setItemId(id);
-            itemAsset.setImagePath(mImageFilePath);
-            DBManager.INSTANCE.getDaoSession().getItemAssetDao().insert(itemAsset);
+            insertImages(id);
             finish();
         }
+    }
+
+    private void updateImages(Long id)
+    {
+        for (int i = 0; i < mImageList.size(); i++) {
+            mItemAssetList.get(i).setImagePath(mImageList.get(i));
+        }
+        DBManager.INSTANCE.getDaoSession().getItemAssetDao().updateInTx(mItemAssetList);
+    }
+
+    private void insertImages(Long id)
+    {
+        List<ItemAsset> itemAssets = new ArrayList<>();
+        for (int i = 0; i < mImageList.size(); i++) {
+            ItemAsset itemAsset = new ItemAsset();
+            itemAsset.setItemId(id);
+            itemAsset.setImagePath(mImageList.get(i));
+            itemAssets.add(itemAsset);
+        }
+
+        DBManager.INSTANCE.getDaoSession().getItemAssetDao().insertInTx(itemAssets);
     }
 
     private boolean validate() {
@@ -146,18 +175,6 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         } else if (TextUtils.isEmpty(mParticular)) {
             Toast.makeText(this, "Particular is empty", Toast.LENGTH_SHORT).show();
             return false;
-        } else if (TextUtils.isEmpty(mCreditAmt)) {
-            Toast.makeText(this, "Credit Amount is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (TextUtils.isEmpty(mDebitAmt)) {
-            Toast.makeText(this, "Debit Amount is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (TextUtils.isEmpty(mCreditWgt)) {
-            Toast.makeText(this, "Credit weight is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (TextUtils.isEmpty(mDebitWgt)) {
-            Toast.makeText(this, "Debit weight is empty", Toast.LENGTH_SHORT).show();
-            return false;
         }
         return true;
     }
@@ -169,8 +186,42 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
 
     @Override
     protected void onLoadImage(String filePath) {
-        mImageFilePath = filePath;
-        Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.itemImage);
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        mImageFilePath = FileUtils.storeImage(this, bitmap);
+        mImageList.add(mImageFilePath);
+
+        addMultipleImages();
+
+    }
+
+    private void setImagesForEdit()
+    {
+        if(Utils.listNotNull(mItemAssetList))
+        {
+            for (int i = 0; i < mItemAssetList.size(); i++) {
+                mImageList.add(mItemAssetList.get(0).getImagePath());
+            }
+        }
+        addMultipleImages();
+    }
+
+    private void addMultipleImages()
+    {
+        if(Utils.listNotNull(mImageList)) {
+            viewBinding.horizontalSv.setVisibility(View.VISIBLE);
+            viewBinding.imgContainer.removeAllViews();
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            lp.setMargins(8,0,8,0);
+            for (int i = 0; i < mImageList.size(); i++) {
+                ImageView imageView = new ImageView(this);
+                imageView.setLayoutParams(lp);
+                viewBinding.imgContainer.addView(imageView);
+                Glide.with(this).load(mImageList.get(i)).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(imageView);
+            }
+
+        }
     }
 
     @Override
@@ -179,6 +230,4 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         viewBinding.dateEt.setText(mDate);
 
     }
-
-
 }

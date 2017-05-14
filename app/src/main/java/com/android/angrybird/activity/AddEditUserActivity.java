@@ -1,5 +1,7 @@
 package com.android.angrybird.activity;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.View;
@@ -11,6 +13,7 @@ import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityAddEditUserBinding;
 import com.android.angrybird.fragment.DatePickerFragment;
 import com.android.angrybird.util.DateTimeUtil;
+import com.android.angrybird.util.FileUtils;
 import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
@@ -151,11 +154,7 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
             Toast.makeText(this, "Last name is empty", Toast.LENGTH_SHORT).show();
             return false;
         }
-        else if(TextUtils.isEmpty(mMiddleName))
-        {
-            Toast.makeText(this, "Middle name is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+
         else if(TextUtils.isEmpty(mContactOne))
         {
             Toast.makeText(this, "Contact one is empty", Toast.LENGTH_SHORT).show();
@@ -166,16 +165,7 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
             Toast.makeText(this, "Contact one must be of atleast 10 digit", Toast.LENGTH_SHORT).show();
             return false;
         }
-        else if(TextUtils.isEmpty(mContactTwo))
-        {
-            Toast.makeText(this, "Contact two is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else if(mContactTwo.length() != 10)
-        {
-            Toast.makeText(this, "Contact two must be of atleast 10 digit", Toast.LENGTH_SHORT).show();
-            return false;
-        }
+
         else if(TextUtils.isEmpty(mDateOfBirth))
         {
             Toast.makeText(this, "Date of birth is empty", Toast.LENGTH_SHORT).show();
@@ -196,7 +186,8 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
 
     @Override
     protected void onLoadImage(String filePath) {
-        mImageFilePath = filePath;
+        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+        mImageFilePath = FileUtils.storeImage(this, bitmap);
         Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.userImage);
     }
 

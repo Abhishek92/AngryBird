@@ -23,6 +23,8 @@ import com.android.angrybird.util.FileUtils;
 
 import org.parceler.Parcels;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class UserListActivity extends BaseActivity<ActivityUserListBinding> implements UserListAdapter.OnItemActionListener {
@@ -124,6 +126,12 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
             @Override
             protected Void doInBackground(Void... voids) {
                 FileUtils.copyDatabaseToExternalStorage();
+                try {
+                    File dest = FileUtils.creatImagesFolderExternalStorage();
+                    org.apache.commons.io.FileUtils.copyDirectory(FileUtils.getImageDir(getApplicationContext()), dest);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
 

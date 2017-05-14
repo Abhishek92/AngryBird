@@ -7,6 +7,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
@@ -23,7 +24,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.android.angrybird.AngryBirdApp;
+import com.android.angrybird.receiver.ScreenTrackReceiver;
 import com.android.angrybird.util.FileUtils;
 
 /**
@@ -39,25 +40,54 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     private final CharSequence[] items = {"Take Photo", "Choose from Library",
             "Cancel"};
     protected Uri mCapturedImageURI;
+    private ScreenTrackReceiver mReceiver;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         T t = DataBindingUtil.setContentView(this, getActivityContentView());
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        mReceiver = new ScreenTrackReceiver();
+        registerReceiver(mReceiver, filter);
         onCreateCustom(t);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(AngryBirdApp.getAppInstance().wasInBackground())
+        /*if(AngryBirdApp.getAppInstance().wasInBackground())
         {
             Intent intent = new Intent(this, AuthenticationActivity.class);
             startActivity(intent);
             AngryBirdApp.getAppInstance().setWasInBackground(false);
-        }
+        }*/
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        /*if(ScreenTrackReceiver.isScreenOff)
+        {
+            Intent intent = new Intent(this, AuthenticationActivity.class);
+            startActivity(intent);
+        }*/
+
+    }
+
+    /*@Override
+        protected void onPause() {
+
+            if(ScreenTrackReceiver.isScreenOff)
+            {
+                Intent intent = new Intent(this, AuthenticationActivity.class);
+                startActivity(intent);
+            }
+
+            super.onPause();
+
+        }
+    */
     abstract protected void onCreateCustom(T viewBinding);
 
     abstract protected int getActivityContentView();
@@ -200,5 +230,11 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                 }
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
     }
 }

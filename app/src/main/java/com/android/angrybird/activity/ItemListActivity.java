@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
+import android.widget.Toast;
 
 import com.android.angrybird.R;
 import com.android.angrybird.adapter.ItemListAdapter;
@@ -11,6 +12,7 @@ import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.Item;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityItemListBinding;
+import com.android.angrybird.util.Utils;
 
 import org.parceler.Parcels;
 
@@ -89,9 +91,16 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
         @Override
         protected void onPostExecute(List<Item> itemList) {
             super.onPostExecute(itemList);
-            ItemListAdapter adapter = new ItemListAdapter(ItemListActivity.this, itemList);
-            adapter.setOnItemClickListener(ItemListActivity.this);
-            viewBinding.itemListRv.setAdapter(adapter);
+            if(Utils.listNotNull(itemList)) {
+                ItemListAdapter adapter = new ItemListAdapter(ItemListActivity.this, itemList);
+                adapter.setOnItemClickListener(ItemListActivity.this);
+                viewBinding.itemListRv.setAdapter(adapter);
+            }
+            else
+            {
+                Toast.makeText(ItemListActivity.this, "No Items added for this user", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
     }
 }

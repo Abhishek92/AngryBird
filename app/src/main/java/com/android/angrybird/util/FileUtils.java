@@ -37,7 +37,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
@@ -620,6 +622,57 @@ public class FileUtils {
         } catch (Exception e) {
             System.out.println("Copy error"+e.toString());
         }*/
+    }
+
+    public static File createImageDir(Context context)
+    {
+        File mydir = context.getDir("AngryBirdImages", Context.MODE_PRIVATE); //Creating an internal dir;
+        if (!mydir.exists())
+        {
+            mydir.mkdirs();
+        }
+
+        return mydir;
+    }
+
+    public static File getImageDir(Context context)
+    {
+        return context.getDir("AngryBirdImages", Context.MODE_PRIVATE);
+    }
+
+    public static String storeImage(Context context, Bitmap image) {
+        File pictureFile = getOutputMediaFile(context);
+
+        try {
+            FileOutputStream fos = new FileOutputStream(pictureFile);
+            image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+            fos.close();
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "File not found: " + e.getMessage());
+        } catch (IOException e) {
+            Log.d(TAG, "Error accessing file: " + e.getMessage());
+        }
+
+        return pictureFile.getPath();
+    }
+
+    public static File getOutputMediaFile(Context context){
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("ddMMyyyy_HHmm").format(new java.util.Date());
+        File mediaFile;
+        String mImageName="MI_"+ timeStamp +".png";
+        mediaFile = new File(context.getDir("AngryBirdImages", Context.MODE_PRIVATE) + File.separator + mImageName);
+        return mediaFile;
+    }
+
+    public static File creatImagesFolderExternalStorage()
+    {
+        String folder_main = "AngryBirdImages";
+        File f = new File(Environment.getExternalStorageDirectory(), folder_main);
+        if (!f.exists()) {
+            f.mkdirs();
+        }
+        return f;
     }
 
 

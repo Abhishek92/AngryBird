@@ -3,6 +3,8 @@ package com.android.angrybird;
 import android.app.Application;
 
 import com.android.angrybird.prefs.PreferenceUtil;
+import com.android.angrybird.util.ApplicationLifeCycleHandler;
+import com.android.angrybird.util.FileUtils;
 
 
 /**
@@ -11,7 +13,6 @@ import com.android.angrybird.prefs.PreferenceUtil;
 
 public class AngryBirdApp extends Application {
 
-    private boolean wasInBackground;
     private static AngryBirdApp appInstance;
 
     @Override
@@ -19,22 +20,12 @@ public class AngryBirdApp extends Application {
         super.onCreate();
         appInstance = this;
         PreferenceUtil.getInstance().initPrefs(getApplicationContext());
-    }
+        ApplicationLifeCycleHandler handler = new ApplicationLifeCycleHandler();
+        registerActivityLifecycleCallbacks(handler);
+        registerComponentCallbacks(handler);
+        FileUtils.createImageDir(getApplicationContext());
 
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-        wasInBackground = true;
-    }
 
-    public boolean wasInBackground()
-    {
-        return wasInBackground;
-    }
-
-    public void setWasInBackground(boolean wasInBackground)
-    {
-        this.wasInBackground = wasInBackground;
     }
 
     public static AngryBirdApp getAppInstance()

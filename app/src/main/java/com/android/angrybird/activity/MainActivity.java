@@ -21,6 +21,7 @@ import com.android.angrybird.fragment.ValidatePinFragment;
 import com.android.angrybird.prefs.PreferenceUtil;
 import com.android.angrybird.util.Utils;
 
+import java.io.IOException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -72,7 +73,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             protected Void doInBackground(Void... voids) {
-                DBManager.INSTANCE.initDatabase(getApplicationContext());
+                try {
+                    DBManager.INSTANCE.initDatabase(getApplicationContext());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
 
