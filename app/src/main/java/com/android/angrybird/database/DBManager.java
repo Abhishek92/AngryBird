@@ -23,8 +23,9 @@ public enum DBManager {
         {
             FileUtils.copyDatabaseToInternalStorage(context);
         }
-
-        org.apache.commons.io.FileUtils.copyDirectory(FileUtils.creatImagesFolderExternalStorage(), FileUtils.createImageDir(context));
+        if (!FileUtils.checkIfImageDirExist(context)) {
+            org.apache.commons.io.FileUtils.copyDirectory(FileUtils.creatImagesFolderExternalStorage(), FileUtils.createImageDir(context));
+        }
     }
 
     public DaoSession getDaoSession()

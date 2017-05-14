@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.widget.Toast;
 
 import com.android.angrybird.R;
 import com.android.angrybird.adapter.ItemListAdapter;
@@ -95,11 +94,6 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
                 ItemListAdapter adapter = new ItemListAdapter(ItemListActivity.this, itemList);
                 adapter.setOnItemClickListener(ItemListActivity.this);
                 viewBinding.itemListRv.setAdapter(adapter);
-            }
-            else
-            {
-                Toast.makeText(ItemListActivity.this, "No Items added for this user", Toast.LENGTH_SHORT).show();
-                finish();
             }
         }
     }

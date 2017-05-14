@@ -2,6 +2,7 @@ package com.android.angrybird.activity;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.View;
@@ -142,10 +143,18 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
 
     private void updateImages(Long id)
     {
-        for (int i = 0; i < mImageList.size(); i++) {
-            mItemAssetList.get(i).setImagePath(mImageList.get(i));
+        if (mImageList.size() > mItemAssetList.size()) {
+            int diff = mImageList.size() - mItemAssetList.size();
+            List<String> imageList = mImageList.subList(mItemAssetList.size(), mImageList.size());
+            List<ItemAsset> itemAssetList = new ArrayList<>();
+            for (int i = 0; i < diff; i++) {
+                ItemAsset itemAsset = new ItemAsset();
+                itemAsset.setItemId(id);
+                itemAsset.setImagePath(imageList.get(i));
+                itemAssetList.add(itemAsset);
+            }
+            DBManager.INSTANCE.getDaoSession().getItemAssetDao().insertInTx(itemAssetList);
         }
-        DBManager.INSTANCE.getDaoSession().getItemAssetDao().updateInTx(mItemAssetList);
     }
 
     private void insertImages(Long id)
@@ -185,13 +194,22 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     }
 
     @Override
-    protected void onLoadImage(String filePath) {
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-        mImageFilePath = FileUtils.storeImage(this, bitmap);
-        mImageList.add(mImageFilePath);
+    protected void onLoadImage(final String filePath) {
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... voids) {
+                Bitmap bitmap = BitmapFactory.decodeFile(filePath);
+                mImageFilePath = FileUtils.storeImage(AddEditItemActivity.this, bitmap);
+                return mImageFilePath;
+            }
 
-        addMultipleImages();
-
+            @Override
+            protected void onPostExecute(String s) {
+                super.onPostExecute(s);
+                mImageList.add(mImageFilePath);
+                addMultipleImages();
+            }
+        }.execute();
     }
 
     private void setImagesForEdit()
@@ -199,7 +217,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         if(Utils.listNotNull(mItemAssetList))
         {
             for (int i = 0; i < mItemAssetList.size(); i++) {
-                mImageList.add(mItemAssetList.get(0).getImagePath());
+                mImageList.add(mItemAssetList.get(i).getImagePath());
             }
         }
         addMultipleImages();
@@ -219,6 +237,13 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
                 imageView.setLayoutParams(lp);
                 viewBinding.imgContainer.addView(imageView);
                 Glide.with(this).load(mImageList.get(i)).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(imageView);
+                imageView.setTag(mImageList.get(i));
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showImage(view.getTag().toString());
+                    }
+                });
             }
 
         }

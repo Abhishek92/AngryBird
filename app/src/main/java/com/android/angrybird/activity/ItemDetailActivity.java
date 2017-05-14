@@ -60,10 +60,19 @@ public class ItemDetailActivity extends BaseActivity<ActivityItemDetailBinding> 
             for (int i = 0; i < mImageList.size(); i++) {
                 ImageView imageView = new ImageView(this);
                 imageView.setLayoutParams(lp);
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showImage(view.getTag().toString());
+                    }
+                });
                 viewBinding.imgContainer.addView(imageView);
                 Glide.with(this).load(mImageList.get(i)).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(imageView);
+                imageView.setTag(mImageList.get(i));
             }
 
         }
     }
+
+
 }
