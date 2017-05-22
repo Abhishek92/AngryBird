@@ -26,8 +26,8 @@ import java.util.List;
 public class ValidatePinFragment extends Fragment {
 
 
-    private FragmentValidatePinBinding binding;
     public static final String KEY_FROM_AUTH = "KEY_FROM_AUTH";
+    private FragmentValidatePinBinding binding;
     private boolean isFromAuth;
 
     public ValidatePinFragment() {
@@ -68,7 +68,7 @@ public class ValidatePinFragment extends Fragment {
         List<Admin> adminList = DBManager.INSTANCE.getDaoSession().getAdminDao().loadAll();
         if(Utils.listNotNull(adminList)) {
             Admin admin = adminList.get(0);
-            if(binding.pinEt.getText().toString().equalsIgnoreCase(admin.getPin())){
+            if (binding.pinEntrySimple.getText().toString().equalsIgnoreCase(admin.getPin())) {
                 if(!isFromAuth)
                     getActivity().startActivity(new Intent(getActivity(), UserListActivity.class));
                 getActivity().finish();

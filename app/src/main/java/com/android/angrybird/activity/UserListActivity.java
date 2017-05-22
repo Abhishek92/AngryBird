@@ -25,6 +25,7 @@ import org.parceler.Parcels;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 public class UserListActivity extends BaseActivity<ActivityUserListBinding> implements UserListAdapter.OnItemActionListener {
@@ -148,21 +149,23 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
         new GetAllUserList().execute();
     }
 
-    private class GetAllUserList extends AsyncTask<Void, Void, List<User>>
+    private List<User> getListWithHeader(List<User> userList)
     {
-
-        @Override
-        protected List<User> doInBackground(Void... voids) {
-            return DBManager.INSTANCE.getDaoSession().getUserDao().loadAll();
+        Collections.sort(userList);
+        User headr = new User();
+        headr.setFirstName(String.valueOf(userList.get(0).getFirstName().charAt(0)));
+        userList.add(0, headr);
+        for (int i = 1; i < userList.size(); i++) {
+            User user = userList.get(i - 1);
+            User nextUser = userList.get(i);
+            if (user.getFirstName().charAt(0) != nextUser.getFirstName().charAt(0)) {
+                User headerVal = new User();
+                headerVal.setFirstName(String.valueOf(nextUser.getFirstName().charAt(0)));
+                userList.add(i, headerVal);
+            }
         }
 
-        @Override
-        protected void onPostExecute(List<User> users) {
-            super.onPostExecute(users);
-            UserListAdapter adapter = new UserListAdapter(UserListActivity.this, users);
-            adapter.setOnItemClickListener(UserListActivity.this);
-            viewBinding.userListRv.setAdapter(adapter);
-        }
+        return userList;
     }
 
     @Override
@@ -181,6 +184,22 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
                     Toast.makeText(this, "Please consider granting it all permission", Toast.LENGTH_LONG).show();
                 }
             }
+        }
+    }
+
+    private class GetAllUserList extends AsyncTask<Void, Void, List<User>> {
+
+        @Override
+        protected List<User> doInBackground(Void... voids) {
+            return DBManager.INSTANCE.getDaoSession().getUserDao().loadAll();
+        }
+
+        @Override
+        protected void onPostExecute(List<User> users) {
+            super.onPostExecute(users);
+            UserListAdapter adapter = new UserListAdapter(UserListActivity.this, getListWithHeader(users));
+            adapter.setOnItemClickListener(UserListActivity.this);
+            viewBinding.userListRv.setAdapter(adapter);
         }
     }
 }

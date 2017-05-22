@@ -1,8 +1,10 @@
 package com.android.angrybird.database;
 
+import android.support.annotation.NonNull;
+
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 import org.parceler.Parcel;
 
 /**
@@ -10,7 +12,7 @@ import org.parceler.Parcel;
  */
 @Parcel
 @Entity
-public class User {
+public class User implements Comparable<User> {
 
     @Id(autoincrement = true)
     private Long userId;
@@ -151,13 +153,21 @@ public class User {
         return status;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
     public boolean getStatus() {
         return this.status;
     }
 
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
+    @Override
+    public String toString() {
+        return firstName;
+    }
+
+    @Override
+    public int compareTo(@NonNull User user) {
+        return this.getFirstName().compareTo(user.getFirstName());
+    }
 }

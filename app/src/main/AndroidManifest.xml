@@ -25,15 +25,22 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.UserListActivity"
-            android:label="Users List"/>
-        <activity android:name=".activity.ItemListActivity"
-            android:label="Item List"/>
-        <activity android:name=".activity.ItemDetailActivity"
-            android:label="Item Detail"/>
-        <activity android:name=".activity.AuthenticationActivity"
-            android:label="Login"/>
-
+        <activity
+            android:name=".activity.UserListActivity"
+            android:label="Users List" />
+        <activity
+            android:name=".activity.ItemListActivity"
+            android:label="Item List" />
+        <activity
+            android:name=".activity.ItemDetailActivity"
+            android:label="Item Detail" />
+        <activity
+            android:name=".activity.AuthenticationActivity"
+            android:label="Login" />
+        <activity
+            android:name=".activity.ScrollingActivity"
+            android:label="@string/title_activity_scrolling"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

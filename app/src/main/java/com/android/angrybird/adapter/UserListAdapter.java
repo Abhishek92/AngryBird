@@ -16,6 +16,7 @@ import com.android.angrybird.R;
 import com.android.angrybird.activity.AddEditUserActivity;
 import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.User;
+import com.android.angrybird.databinding.HeaderLayoutViewBinding;
 import com.android.angrybird.databinding.UserListItemLayoutBinding;
 import com.bumptech.glide.Glide;
 
@@ -45,26 +46,38 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     }
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        UserListItemLayoutBinding binding =
-                DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.user_list_item_layout, parent, false);
-        return new ViewHolder(binding);
+        if (viewType == R.layout.header_layout_view) {
+            HeaderLayoutViewBinding binding =
+                    DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.header_layout_view, parent, false);
+            return new ViewHolder(binding);
+        } else {
+            UserListItemLayoutBinding binding =
+                    DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.user_list_item_layout, parent, false);
+            return new ViewHolder(binding);
+        }
+
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         final User user = mUserList.get(position);
-        holder.bindData(user);
-        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(null != mListener)
-                    mListener.onItemSelected(user);
-            }
-        });
-        Glide.with(mContext).load(user.getUserImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
-        holder.binding.title.setText(String.format("%s %s %s", user.getFirstName(), user.getMiddleName(), user.getLastName()));
-        holder.binding.contact.setText("Contact no: ".concat(user.getContactOne()));
-        setUpPopupMenu(holder, user);
+        if (user.getGender() == null) {
+            holder.headerLayoutViewBinding.container.setText(user.getFirstName());
+        } else {
+            holder.bindData(user);
+            holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (null != mListener)
+                        mListener.onItemSelected(user);
+                }
+            });
+            Glide.with(mContext).load(user.getUserImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
+            holder.binding.title.setText(String.format("%s %s %s", user.getFirstName(), user.getMiddleName(), user.getLastName()));
+            holder.binding.contact.setText("Contact no: ".concat(user.getContactOne()));
+            holder.binding.address.setText("Address: ".concat(user.getAddress()));
+            setUpPopupMenu(holder, user);
+        }
     }
 
     private void setUpPopupMenu(final ViewHolder holder, final User user) {
@@ -113,15 +126,34 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     }
 
     @Override
+    public int getItemViewType(int position) {
+        return mUserList.get(position).getGender() == null ? R.layout.header_layout_view : R.layout.user_list_item_layout;
+    }
+
+    @Override
     public int getItemCount() {
         return mUserList.size();
     }
 
+    public interface OnItemActionListener {
+        void onItemSelected(Object t);
+
+        void onItemDeleted();
+
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private UserListItemLayoutBinding binding;
+        private HeaderLayoutViewBinding headerLayoutViewBinding;
         public ViewHolder(UserListItemLayoutBinding binding) {
             super(binding.getRoot());
             this.binding = DataBindingUtil.getBinding(binding.getRoot());
+
+        }
+
+        public ViewHolder(HeaderLayoutViewBinding binding) {
+            super(binding.getRoot());
+            this.headerLayoutViewBinding = DataBindingUtil.getBinding(binding.getRoot());
         }
 
         public void bindData(User organisation) {
@@ -130,12 +162,5 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                 binding.executePendingBindings();
             }
         }
-    }
-
-    public interface OnItemActionListener
-    {
-        public void onItemSelected(Object t);
-        public void onItemDeleted();
-
     }
 }

@@ -4,6 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -39,17 +42,11 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
         this.viewBinding = viewBinding;
         user = Parcels.unwrap(getIntent().getParcelableExtra(KEY_USER_DATA));
         mActionBar = getSupportActionBar();
-        viewBinding.submitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(null != user)
-                    updateUserToDatabase();
-                else
-                    addUserToDatabase();
-            }
-        });
+        if (null != mActionBar) {
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
-        viewBinding.userImage.setOnClickListener(new View.OnClickListener() {
+        viewBinding.capturePic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showPicker();
@@ -74,8 +71,28 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
         else
         {
             if(null != mActionBar)
-                mActionBar.setTitle("Add user");
+                mActionBar.setTitle("Add New User");
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_add_user, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_done) {
+            if (null != user)
+                updateUserToDatabase();
+            else
+                addUserToDatabase();
+        } else if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setUserDataForEdit()
@@ -188,7 +205,7 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
     protected void onLoadImage(String filePath) {
         Bitmap bitmap = BitmapFactory.decodeFile(filePath);
         mImageFilePath = FileUtils.storeImage(this, bitmap);
-        Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.userImage);
+        Glide.with(this).load(filePath).fitCenter().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.userImage);
     }
 
 
