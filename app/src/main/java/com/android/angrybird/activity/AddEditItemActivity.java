@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -45,6 +46,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     private ActionBar mActionBar;
     private List<ItemAsset> mItemAssetList = new ArrayList<>();
     private List<String> mImageList = new ArrayList<>();
+
 
     @Override
     protected void onCreateCustom(ActivityAddEditItemBinding viewBinding) {
@@ -178,10 +180,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         mCreditWgt = viewBinding.creditWeightEt.getText().toString();
         mDebitWgt = viewBinding.debitWeightEt.getText().toString();
 
-        if (TextUtils.isEmpty(mDate)) {
-            Toast.makeText(this, "Date is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (TextUtils.isEmpty(mParticular)) {
+        if (TextUtils.isEmpty(mParticular)) {
             Toast.makeText(this, "Particular is empty", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -228,14 +227,10 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         if(Utils.listNotNull(mImageList)) {
             viewBinding.horizontalSv.setVisibility(View.VISIBLE);
             viewBinding.imgContainer.removeAllViews();
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT,
-                    LinearLayout.LayoutParams.MATCH_PARENT);
-            lp.setMargins(8,0,8,0);
             for (int i = 0; i < mImageList.size(); i++) {
-                ImageView imageView = new ImageView(this);
-                imageView.setLayoutParams(lp);
-                viewBinding.imgContainer.addView(imageView);
+                LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.image_item_layout, null);
+                ImageView imageView = (ImageView) linearLayout.findViewById(R.id.img);
+                viewBinding.imgContainer.addView(linearLayout);
                 Glide.with(this).load(mImageList.get(i)).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(imageView);
                 imageView.setTag(mImageList.get(i));
                 imageView.setOnClickListener(new View.OnClickListener() {
@@ -246,6 +241,14 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
                 });
             }
 
+            LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_more_image_view, null);
+            linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    showPicker();
+                }
+            });
+            viewBinding.imgContainer.addView(linearLayout);
         }
     }
 

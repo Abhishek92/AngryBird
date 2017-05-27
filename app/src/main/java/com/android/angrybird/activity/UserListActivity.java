@@ -1,6 +1,8 @@
 package com.android.angrybird.activity;
 
 import android.Manifest;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -8,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SearchView;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,6 +24,7 @@ import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityUserListBinding;
 import com.android.angrybird.util.FileUtils;
+import com.android.angrybird.util.Utils;
 
 import org.parceler.Parcels;
 
@@ -32,6 +37,8 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
 
     private static final int REQUEST_PERMISSION_STORAGE = 2001;
     private ActivityUserListBinding viewBinding;
+    private UserListAdapter mAdapter;
+
     @Override
     protected void onCreateCustom(ActivityUserListBinding viewBinding) {
         this.viewBinding = viewBinding;
@@ -64,6 +71,32 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint(getResources().getString(R.string.query_hint));
+
+        SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (mAdapter != null && !TextUtils.isEmpty(newText))
+                    mAdapter.setFilter(newText);
+                else if (mAdapter != null && TextUtils.isEmpty(newText))
+                    mAdapter.flushFilter();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (mAdapter != null && !TextUtils.isEmpty(query))
+                    mAdapter.setFilter(query);
+                else if (mAdapter != null && TextUtils.isEmpty(query))
+                    mAdapter.flushFilter();
+                return true;
+            }
+        };
+        searchView.setOnQueryTextListener(textChangeListener);
         return true;
     }
 
@@ -151,17 +184,19 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
 
     private List<User> getListWithHeader(List<User> userList)
     {
-        Collections.sort(userList);
-        User headr = new User();
-        headr.setFirstName(String.valueOf(userList.get(0).getFirstName().charAt(0)));
-        userList.add(0, headr);
-        for (int i = 1; i < userList.size(); i++) {
-            User user = userList.get(i - 1);
-            User nextUser = userList.get(i);
-            if (user.getFirstName().charAt(0) != nextUser.getFirstName().charAt(0)) {
-                User headerVal = new User();
-                headerVal.setFirstName(String.valueOf(nextUser.getFirstName().charAt(0)));
-                userList.add(i, headerVal);
+        if (Utils.listNotNull(userList)) {
+            Collections.sort(userList);
+            User headr = new User();
+            headr.setFirstName(String.valueOf(userList.get(0).getFirstName().charAt(0)));
+            userList.add(0, headr);
+            for (int i = 1; i < userList.size(); i++) {
+                User user = userList.get(i - 1);
+                User nextUser = userList.get(i);
+                if (user.getFirstName().charAt(0) != nextUser.getFirstName().charAt(0)) {
+                    User headerVal = new User();
+                    headerVal.setFirstName(String.valueOf(nextUser.getFirstName().charAt(0)));
+                    userList.add(i, headerVal);
+                }
             }
         }
 
@@ -197,9 +232,9 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
         @Override
         protected void onPostExecute(List<User> users) {
             super.onPostExecute(users);
-            UserListAdapter adapter = new UserListAdapter(UserListActivity.this, getListWithHeader(users));
-            adapter.setOnItemClickListener(UserListActivity.this);
-            viewBinding.userListRv.setAdapter(adapter);
+            mAdapter = new UserListAdapter(UserListActivity.this, getListWithHeader(users));
+            mAdapter.setOnItemClickListener(UserListActivity.this);
+            viewBinding.userListRv.setAdapter(mAdapter);
         }
     }
 }

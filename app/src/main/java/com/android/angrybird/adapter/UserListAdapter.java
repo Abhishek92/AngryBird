@@ -18,10 +18,13 @@ import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.HeaderLayoutViewBinding;
 import com.android.angrybird.databinding.UserListItemLayoutBinding;
+import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -32,12 +35,14 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
 
     private Context mContext;
     private List<User> mUserList;
+    private List<User> mBackupList;
     private OnItemActionListener mListener;
 
     public UserListAdapter(Context context, List<User> userList)
     {
         mContext = context;
         mUserList = userList;
+        mBackupList = new ArrayList<>();
     }
 
     public void setOnItemClickListener(OnItemActionListener listener)
@@ -133,6 +138,45 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     @Override
     public int getItemCount() {
         return mUserList.size();
+    }
+
+    public void flushFilter() {
+        mUserList = new ArrayList<>();
+        mUserList.addAll(mBackupList);
+        mUserList = getListWithHeader(mUserList);
+        notifyDataSetChanged();
+    }
+
+    private List<User> getListWithHeader(List<User> userList) {
+        if (Utils.listNotNull(userList)) {
+            Collections.sort(userList);
+            User headr = new User();
+            headr.setFirstName(String.valueOf(userList.get(0).getFirstName().charAt(0)));
+            userList.add(0, headr);
+            for (int i = 1; i < userList.size(); i++) {
+                User user = userList.get(i - 1);
+                User nextUser = userList.get(i);
+                if (user.getFirstName().charAt(0) != nextUser.getFirstName().charAt(0)) {
+                    User headerVal = new User();
+                    headerVal.setFirstName(String.valueOf(nextUser.getFirstName().charAt(0)));
+                    userList.add(i, headerVal);
+                }
+            }
+        }
+
+        return userList;
+    }
+
+    public void setFilter(String queryText) {
+
+        mUserList = new ArrayList<>();
+        queryText = queryText.toLowerCase();
+        for (User item : mBackupList) {
+            if (item.getFirstName().toLowerCase().contains(queryText))
+                mUserList.add(item);
+        }
+        mUserList = getListWithHeader(mUserList);
+        notifyDataSetChanged();
     }
 
     public interface OnItemActionListener {
