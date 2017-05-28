@@ -42,7 +42,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     {
         mContext = context;
         mUserList = userList;
-        mBackupList = new ArrayList<>();
+        mBackupList = new ArrayList<>(userList);
     }
 
     public void setOnItemClickListener(OnItemActionListener listener)
@@ -143,11 +143,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     public void flushFilter() {
         mUserList = new ArrayList<>();
         mUserList.addAll(mBackupList);
-        mUserList = getListWithHeader(mUserList);
         notifyDataSetChanged();
     }
 
-    private List<User> getListWithHeader(List<User> userList) {
+    private List<User> getListWithHeader(List<User> list) {
+        List<User> userList = new ArrayList<>(list);
         if (Utils.listNotNull(userList)) {
             Collections.sort(userList);
             User headr = new User();
@@ -172,7 +172,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         mUserList = new ArrayList<>();
         queryText = queryText.toLowerCase();
         for (User item : mBackupList) {
-            if (item.getFirstName().toLowerCase().contains(queryText))
+            if (item.getFirstName().toLowerCase().contains(queryText) && item.getGender() != null)
                 mUserList.add(item);
         }
         mUserList = getListWithHeader(mUserList);

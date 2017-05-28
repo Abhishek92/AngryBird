@@ -38,6 +38,7 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
             public void onClick(View view) {
                 Intent intent = new Intent(ItemListActivity.this, AddEditItemActivity.class);
                 intent.putExtra(AddEditItemActivity.KEY_USER_ID, user.getUserId());
+                intent.putExtra(AddEditItemActivity.KEY_USER_NAME, user.getFirstName().concat(" ").concat(user.getLastName()));
                 startActivity(intent);
             }
         });

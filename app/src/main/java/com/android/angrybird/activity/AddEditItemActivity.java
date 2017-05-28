@@ -35,6 +35,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     public static final String KEY_ITEM_DATA = "KEY_ITEM_DATA";
     public static final String KEY_ITEM_ASSET_DATA = "KEY_ITEM_ASSET_DATA";
     public static final String KEY_USER_ID = "KEY_USER_ID";
+    public static final String KEY_USER_NAME = "KEY_USER_NAME";
     private ActivityAddEditItemBinding viewBinding;
 
     private String mDate;
@@ -49,16 +50,19 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     private ActionBar mActionBar;
     private List<ItemAsset> mItemAssetList = new ArrayList<>();
     private List<String> mImageList = new ArrayList<>();
+    private String userName;
 
 
     @Override
     protected void onCreateCustom(ActivityAddEditItemBinding viewBinding) {
         this.viewBinding = viewBinding;
         userId = getIntent().getLongExtra(KEY_USER_ID, 0);
+        userName = getIntent().getStringExtra(KEY_USER_NAME);
         item = Parcels.unwrap(getIntent().getParcelableExtra(KEY_ITEM_DATA));
         if(null != item) {
             mItemAssetList = DBManager.INSTANCE.getDaoSession().getItemAssetDao().queryRaw("WHERE ITEM_ID = ?", String.valueOf(item.getItemId()));
         }
+        viewBinding.descText.setText("Adding New Item for: ".concat(userName));
         mActionBar = getSupportActionBar();
         if (null != mActionBar)
             mActionBar.setDisplayHomeAsUpEnabled(true);
