@@ -1,11 +1,14 @@
 package com.android.angrybird.activity;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,6 +60,9 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             mItemAssetList = DBManager.INSTANCE.getDaoSession().getItemAssetDao().queryRaw("WHERE ITEM_ID = ?", String.valueOf(item.getItemId()));
         }
         mActionBar = getSupportActionBar();
+        if (null != mActionBar)
+            mActionBar.setDisplayHomeAsUpEnabled(true);
+
         viewBinding.submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,6 +90,13 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             }
         });
         setItemDataForEdit();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
+        return super.onOptionsItemSelected(item);
     }
 
     private void setItemDataForEdit()
@@ -139,8 +152,42 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
 
             Long id = DBManager.INSTANCE.getDaoSession().getItemDao().insert(item);
             insertImages(id);
-            finish();
+            showAddMoreDialog();
         }
+    }
+
+    private void showAddMoreDialog() {
+        new AlertDialog.Builder(this).setMessage("Do you want to Add more item?").setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                clearAllViews();
+            }
+        }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        }).show();
+    }
+
+    private void clearAllViews() {
+        viewBinding.particularEt.setText("");
+        viewBinding.dateEt.setText("");
+        viewBinding.debitWeightEt.setText("");
+        viewBinding.creditWeightEt.setText("");
+        viewBinding.debitAmtEt.setText("");
+        viewBinding.creditAmtEt.setText("");
+        mImageList.clear();
+
+        viewBinding.imgContainer.removeAllViews();
+        LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_more_image_view, null);
+        linearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showPicker();
+            }
+        });
+        viewBinding.imgContainer.addView(linearLayout);
     }
 
     private void updateImages(Long id)

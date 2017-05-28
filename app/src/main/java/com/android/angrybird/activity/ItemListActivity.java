@@ -1,7 +1,9 @@
 package com.android.angrybird.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -11,6 +13,7 @@ import com.android.angrybird.R;
 import com.android.angrybird.adapter.ItemListAdapter;
 import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.Item;
+import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityItemListBinding;
 import com.android.angrybird.util.Utils;
@@ -87,10 +90,25 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
 
     @Override
     public void onItemSelected(Object t) {
-        Item item = (Item) t;
-        Intent intent = new Intent(this, ItemDetailActivity.class);
-        intent.putExtra(ItemDetailActivity.KEY_ITEM_DATA, Parcels.wrap(item));
-        startActivity(intent);
+        final Item item = (Item) t;
+        final ItemAsset itemAsset = DBManager.INSTANCE.getDaoSession().getItemAssetDao().load(item.getItemId());
+        new AlertDialog.Builder(this).setMessage("What you want to do with this item?").setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(ItemListActivity.this, AddEditItemActivity.class);
+                intent.putExtra(AddEditItemActivity.KEY_ITEM_DATA, Parcels.wrap(item));
+                intent.putExtra(AddEditItemActivity.KEY_ITEM_ASSET_DATA, Parcels.wrap(itemAsset));
+                startActivity(intent);
+            }
+        }).setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                DBManager.INSTANCE.getDaoSession().getItemDao().deleteByKey(item.getItemId());
+                DBManager.INSTANCE.getDaoSession().getItemAssetDao().deleteByKey(itemAsset.getItemAssetId());
+                new GetAllItemList().execute();
+                dialogInterface.cancel();
+            }
+        }).show();
     }
 
     @Override
