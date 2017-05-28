@@ -99,6 +99,7 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
                 Intent intent = new Intent(ItemListActivity.this, AddEditItemActivity.class);
                 intent.putExtra(AddEditItemActivity.KEY_ITEM_DATA, Parcels.wrap(item));
                 intent.putExtra(AddEditItemActivity.KEY_ITEM_ASSET_DATA, Parcels.wrap(itemAsset));
+                intent.putExtra(AddEditItemActivity.KEY_USER_NAME, user.getFirstName().concat(" ").concat(user.getLastName()));
                 startActivity(intent);
             }
         }).setNegativeButton("Delete", new DialogInterface.OnClickListener() {
