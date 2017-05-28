@@ -1,53 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp">
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="S.No"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Particular"
+            android:textColor="@android:color/black"
+
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
             android:text="Date"
-            android:textSize="18sp"
             android:textColor="@android:color/black"
-            android:layout_weight="3"/>
+            android:textSize="14sp" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:text="Particular"/>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
-            android:textSize="18sp"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="D.Amt"
             android:textColor="@android:color/black"
-            android:text="C.Amt"/>
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
-            android:textSize="18sp"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="C.Amt"
             android:textColor="@android:color/black"
-            android:text="D.Amt"/>
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Balance"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
     </LinearLayout>
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@android:color/black"
         android:alpha="0.33"
-        android:layout_marginTop="10dp"/>
+        android:background="@android:color/black" />
 
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,15 +52,21 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     public void onBindViewHolder(final ItemListAdapter.ViewHolder holder, int position) {
         final Item item = mItemList.get(position);
         holder.bindData(item);
-        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+        holder.binding.getRoot().setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View view) {
+            public boolean onLongClick(View view) {
                 if(null != mListener)
                     mListener.onItemSelected(item);
+                return true;
             }
         });
+
+        holder.binding.sNoTxt.setText(String.valueOf(item.getItemId()));
+        int debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Integer.parseInt(item.getDebitAmount());
+        int creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Integer.parseInt(item.getCreditAmount());
+        String balance = String.valueOf(debitAmt - creditAmt);
+        holder.binding.balanceTxt.setText(balance);
         ItemAsset itemAsset = DBManager.INSTANCE.getDaoSession().getItemAssetDao().load(item.getItemId());
-       // Glide.with(mContext).load(itemAsset.getImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
         setEditAndDelete(holder, item, itemAsset);
     }
 
@@ -101,6 +108,12 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         return mItemList.size();
     }
 
+    public interface OnItemActionListener {
+        void onItemSelected(Object t);
+
+        void onItemDeleted();
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ItemListLayoutBinding binding;
         public ViewHolder(ItemListLayoutBinding binding) {
@@ -114,11 +127,5 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
                 binding.executePendingBindings();
             }
         }
-    }
-
-    public interface OnItemActionListener
-    {
-        public void onItemSelected(Object t);
-        public void onItemDeleted();
     }
 }

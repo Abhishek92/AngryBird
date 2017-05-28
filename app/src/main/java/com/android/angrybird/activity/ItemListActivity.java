@@ -3,6 +3,8 @@ package com.android.angrybird.activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.widget.LinearLayoutManager;
+import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.android.angrybird.R;
@@ -12,6 +14,7 @@ import com.android.angrybird.database.Item;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityItemListBinding;
 import com.android.angrybird.util.Utils;
+import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
 
@@ -35,7 +38,16 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
                 startActivity(intent);
             }
         });
+        setUpHeaderView();
         setUpRecyclerView();
+    }
+
+    private void setUpHeaderView() {
+        Glide.with(this).load(user.getUserImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.personHeaderView.userImg);
+        if (null != getSupportActionBar()) {
+            getSupportActionBar().setTitle(user.getFirstName().concat(" ").concat(user.getLastName()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     @Override
@@ -46,6 +58,13 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
     @Override
     protected void onLoadImage(String filePath) {
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home)
+            finish();
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -79,6 +98,23 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
         new GetAllItemList().execute();
     }
 
+    private void setHeaderAmountValue(List<Item> itemList) {
+        int totalDebitAmt = 0;
+        int totalCreditAmt = 0;
+        for (int i = 0; i < itemList.size(); i++) {
+            Item item = itemList.get(i);
+            int debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Integer.parseInt(item.getDebitAmount());
+            int creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Integer.parseInt(item.getCreditAmount());
+            totalDebitAmt += debitAmt;
+            totalCreditAmt += creditAmt;
+        }
+        int balance = totalDebitAmt - totalCreditAmt;
+
+        viewBinding.personHeaderView.debitAmt.setText(String.format("Debit Amount:  %d", totalDebitAmt));
+        viewBinding.personHeaderView.creditAmt.setText(String.format("Credit Amount:  %d", totalCreditAmt));
+        viewBinding.personHeaderView.balance.setText(String.format("Balance:  %d", balance));
+    }
+
     private class GetAllItemList extends AsyncTask<Void, Void, List<Item>>
     {
 
@@ -91,6 +127,7 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
         protected void onPostExecute(List<Item> itemList) {
             super.onPostExecute(itemList);
             if(Utils.listNotNull(itemList)) {
+                setHeaderAmountValue(itemList);
                 ItemListAdapter adapter = new ItemListAdapter(ItemListActivity.this, itemList);
                 adapter.setOnItemClickListener(ItemListActivity.this);
                 viewBinding.itemListRv.setAdapter(adapter);
