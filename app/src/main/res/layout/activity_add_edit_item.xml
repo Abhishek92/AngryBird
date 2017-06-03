@@ -103,7 +103,15 @@
                     android:singleLine="true" />
             </LinearLayout>
 
-
+            <EditText
+                android:id="@+id/aliasEt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Alias No"
+                android:inputType="number"
+                android:maxLength="4"
+                android:singleLine="true" />
             <!--<ImageView
                 android:id="@+id/item_image"
                 android:layout_width="100dp"

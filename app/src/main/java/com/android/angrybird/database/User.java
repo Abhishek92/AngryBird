@@ -16,6 +16,7 @@ public class User implements Comparable<User> {
 
     @Id(autoincrement = true)
     private Long userId;
+    private Long aliasNo;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -29,12 +30,13 @@ public class User implements Comparable<User> {
     private String modifiedDate;
     private boolean status;
 
-    @Generated(hash = 1720186769)
-    public User(Long userId, String firstName, String lastName, String middleName,
-            String contactOne, String contactTwo, String gender, String dateOfBirth,
-            String address, String userImagePath, String createdDate,
-            String modifiedDate, boolean status) {
+    @Generated(hash = 1322063535)
+    public User(Long userId, Long aliasNo, String firstName, String lastName,
+                String middleName, String contactOne, String contactTwo, String gender,
+                String dateOfBirth, String address, String userImagePath,
+                String createdDate, String modifiedDate, boolean status) {
         this.userId = userId;
+        this.aliasNo = aliasNo;
         this.firstName = firstName;
         this.lastName = lastName;
         this.middleName = middleName;
@@ -169,5 +171,13 @@ public class User implements Comparable<User> {
     @Override
     public int compareTo(@NonNull User user) {
         return this.getFirstName().compareTo(user.getFirstName());
+    }
+
+    public Long getAliasNo() {
+        return this.aliasNo;
+    }
+
+    public void setAliasNo(Long aliasNo) {
+        this.aliasNo = aliasNo;
     }
 }

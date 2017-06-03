@@ -1,8 +1,8 @@
 package com.android.angrybird.database;
 
 import org.greenrobot.greendao.annotation.Entity;
-import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+import org.greenrobot.greendao.annotation.Id;
 import org.parceler.Parcel;
 
 /**
@@ -15,6 +15,7 @@ public class Item {
     @Id(autoincrement = true)
     private Long itemId;
     private Long userId;
+    private Long aliasNo;
     private String date;
     private String particular;
     private String debitAmount;
@@ -25,13 +26,14 @@ public class Item {
     private String createdDate;
     private String modifiedDate;
 
-    @Generated(hash = 1209699489)
-    public Item(Long itemId, Long userId, String date, String particular,
-            String debitAmount, String creditAmount, String debitWeight,
-            String crediWeight, boolean status, String createdDate,
-            String modifiedDate) {
+    @Generated(hash = 190020101)
+    public Item(Long itemId, Long userId, Long aliasNo, String date,
+                String particular, String debitAmount, String creditAmount,
+                String debitWeight, String crediWeight, boolean status,
+                String createdDate, String modifiedDate) {
         this.itemId = itemId;
         this.userId = userId;
+        this.aliasNo = aliasNo;
         this.date = date;
         this.particular = particular;
         this.debitAmount = debitAmount;
@@ -51,7 +53,9 @@ public class Item {
         return itemId;
     }
 
-
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
 
     public Long getUserId() {
         return userId;
@@ -113,10 +117,6 @@ public class Item {
         return status;
     }
 
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
     public String getCreatedDate() {
         return createdDate;
     }
@@ -137,7 +137,15 @@ public class Item {
         return this.status;
     }
 
-    public void setItemId(Long itemId) {
-        this.itemId = itemId;
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public Long getAliasNo() {
+        return this.aliasNo;
+    }
+
+    public void setAliasNo(Long aliasNo) {
+        this.aliasNo = aliasNo;
     }
 }

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.Item;
 import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.databinding.ItemListLayoutBinding;
+import com.android.angrybird.fragment.ItemDetailFragment;
 
 import org.parceler.Parcels;
 
@@ -61,7 +64,18 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             }
         });
 
-        holder.binding.sNoTxt.setText(String.valueOf(item.getItemId()));
+        holder.binding.getRoot().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ItemDetailFragment itemDetailFragment = new ItemDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(ItemDetailFragment.KEY_ITEM_DATA, Parcels.wrap(item));
+                itemDetailFragment.setArguments(bundle);
+                itemDetailFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), ItemDetailFragment.TAG);
+            }
+        });
+
+        holder.binding.sNoTxt.setText(String.valueOf(item.getAliasNo()));
         int debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Integer.parseInt(item.getDebitAmount());
         int creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Integer.parseInt(item.getCreditAmount());
         String balance = String.valueOf(debitAmt - creditAmt);

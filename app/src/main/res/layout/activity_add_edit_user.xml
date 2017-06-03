@@ -162,6 +162,17 @@
                     android:maxLength="255"
                     android:maxLines="4" />
 
+
+                <EditText
+                    android:id="@+id/aliasEt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="Alias No"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:singleLine="true" />
+
                 <Button
                     android:id="@+id/submitBtn"
                     style="@style/buttonStyle"

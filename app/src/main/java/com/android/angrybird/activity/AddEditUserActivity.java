@@ -1,7 +1,5 @@
 package com.android.angrybird.activity;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -16,7 +14,6 @@ import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityAddEditUserBinding;
 import com.android.angrybird.fragment.DatePickerFragment;
 import com.android.angrybird.util.DateTimeUtil;
-import com.android.angrybird.util.FileUtils;
 import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
@@ -32,8 +29,8 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
     private String mContactTwo;
     private String mDateOfBirth;
     private String mAddress;
+    private Long mAliasNo;
     private String gender;
-    private String mImageFilePath;
     private User user;
     private ActionBar mActionBar;
 
@@ -106,6 +103,7 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
         viewBinding.addressEt.setText(user.getAddress());
         viewBinding.maleRb.setChecked(user.getGender().equalsIgnoreCase("1"));
         viewBinding.femaleRb.setChecked(user.getGender().equalsIgnoreCase("0"));
+        viewBinding.aliasEt.setText(String.valueOf(user.getAliasNo()));
         Glide.with(this).load(user.getUserImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.userImage);
 
     }
@@ -124,7 +122,8 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
             user.setGender(gender);
             user.setModifiedDate("");
             user.setStatus(false);
-            user.setUserImagePath(mImageFilePath);
+            user.setUserImagePath(getImageFilePath());
+            user.setAliasNo(mAliasNo);
 
             DBManager.INSTANCE.getDaoSession().getUserDao().insert(user);
             finish();
@@ -144,7 +143,9 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
             user.setGender(gender);
             user.setModifiedDate(DateTimeUtil.getCurrentDateTime());
             user.setStatus(false);
-            user.setUserImagePath(mImageFilePath);
+            if (!TextUtils.isEmpty(getImageFilePath()) && !user.getUserImagePath().equals(getImageFilePath()))
+                user.setUserImagePath(getImageFilePath());
+            user.setAliasNo(mAliasNo);
 
             DBManager.INSTANCE.getDaoSession().getUserDao().update(user);
             finish();
@@ -161,36 +162,10 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
         mDateOfBirth = viewBinding.dobEt.getText().toString();
         mAddress = viewBinding.addressEt.getText().toString();
         gender = viewBinding.genderRg.getCheckedRadioButtonId() == R.id.maleRb ? "1" : "0";
+        mAliasNo = !TextUtils.isEmpty(viewBinding.aliasEt.getText().toString()) ? Long.parseLong(viewBinding.aliasEt.getText().toString()) : 0;
         if(TextUtils.isEmpty(mFirstName))
         {
             Toast.makeText(this, "First name is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else if(TextUtils.isEmpty(mLastName))
-        {
-            Toast.makeText(this, "Last name is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        else if(TextUtils.isEmpty(mContactOne))
-        {
-            Toast.makeText(this, "Contact one is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else if(mContactOne.length() != 10)
-        {
-            Toast.makeText(this, "Contact one must be of atleast 10 digit", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-
-        else if(TextUtils.isEmpty(mDateOfBirth))
-        {
-            Toast.makeText(this, "Date of birth is empty", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        else if(TextUtils.isEmpty(mAddress))
-        {
-            Toast.makeText(this, "Address is empty", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
@@ -203,9 +178,8 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
 
     @Override
     protected void onLoadImage(String filePath) {
-        Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-        mImageFilePath = FileUtils.storeImage(this, bitmap);
         Glide.with(this).load(filePath).fitCenter().placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.userImage);
+        saveImageToFile(filePath);
     }
 
 

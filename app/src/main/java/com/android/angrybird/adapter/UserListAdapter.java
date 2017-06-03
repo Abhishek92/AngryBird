@@ -20,6 +20,9 @@ import com.android.angrybird.databinding.HeaderLayoutViewBinding;
 import com.android.angrybird.databinding.UserListItemLayoutBinding;
 import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import org.parceler.Parcels;
 
@@ -77,7 +80,17 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                         mListener.onItemSelected(user);
                 }
             });
-            Glide.with(mContext).load(user.getUserImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
+            Glide.with(mContext).load(user.getUserImagePath()).listener(new RequestListener<String, GlideDrawable>() {
+                @Override
+                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                    return false;
+                }
+
+                @Override
+                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                    return false;
+                }
+            }).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
             holder.binding.title.setText(String.format("%s %s %s", user.getFirstName(), user.getMiddleName(), user.getLastName()));
             holder.binding.contact.setText("Contact no: ".concat(user.getContactOne()));
             holder.binding.address.setText("Address: ".concat(user.getAddress()));

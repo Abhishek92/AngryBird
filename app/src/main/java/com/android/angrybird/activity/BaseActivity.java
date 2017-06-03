@@ -31,13 +31,14 @@ import android.widget.Toast;
 import com.android.angrybird.R;
 import com.android.angrybird.receiver.ScreenTrackReceiver;
 import com.android.angrybird.util.FileUtils;
+import com.android.angrybird.util.SaveBitmapTask;
 import com.bumptech.glide.Glide;
 
 /**
  * Created by hp pc on 04-05-2017.
  */
 
-public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatActivity {
+public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatActivity implements SaveBitmapTask.FileSaveListener {
 
     protected static final int CAMERA_REQUEST = 1001;
     protected static final int GALLERY_REQUEST = 1002;
@@ -47,6 +48,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
             "Cancel"};
     protected Uri mCapturedImageURI;
     private ScreenTrackReceiver mReceiver;
+    private String mImageFilePath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,7 +119,10 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         {
             showImagePicker();
         }
+    }
 
+    protected void saveImageToFile(String filePath) {
+        new SaveBitmapTask(this).execute(filePath);
     }
 
     protected void showImage(String filePath) {
@@ -253,6 +258,15 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                 }
             }
         }
+    }
+
+    protected String getImageFilePath() {
+        return mImageFilePath;
+    }
+
+    @Override
+    public void onFileSaved(String path) {
+        mImageFilePath = path;
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.android.angrybird.activity;
 
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -21,7 +19,7 @@ import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.databinding.ActivityAddEditItemBinding;
 import com.android.angrybird.fragment.DatePickerFragment;
 import com.android.angrybird.util.DateTimeUtil;
-import com.android.angrybird.util.FileUtils;
+import com.android.angrybird.util.ImageCompressionUtil;
 import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
 
@@ -47,6 +45,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     private String mImageFilePath;
     private Long userId;
     private Item item;
+    private Long mAliasNo;
     private ActionBar mActionBar;
     private List<ItemAsset> mItemAssetList = new ArrayList<>();
     private List<String> mImageList = new ArrayList<>();
@@ -115,6 +114,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             viewBinding.debitAmtEt.setText(item.getDebitAmount());
             viewBinding.creditWeightEt.setText(item.getCrediWeight());
             viewBinding.debitWeightEt.setText(item.getDebitWeight());
+            viewBinding.aliasEt.setText(String.valueOf(item.getAliasNo()));
             setImagesForEdit();
         }
         else {
@@ -134,6 +134,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             item.setDebitAmount(mDebitAmt);
             item.setCrediWeight(mCreditWgt);
             item.setDebitWeight(mDebitWgt);
+            item.setAliasNo(mAliasNo);
             DBManager.INSTANCE.getDaoSession().getItemDao().update(item);
             updateImages(item.getItemId());
             finish();
@@ -153,6 +154,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             item.setDebitAmount(mDebitAmt);
             item.setCrediWeight(mCreditWgt);
             item.setDebitWeight(mDebitWgt);
+            item.setAliasNo(mAliasNo);
 
             Long id = DBManager.INSTANCE.getDaoSession().getItemDao().insert(item);
             insertImages(id);
@@ -181,6 +183,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         viewBinding.creditWeightEt.setText("");
         viewBinding.debitAmtEt.setText("");
         viewBinding.creditAmtEt.setText("");
+        viewBinding.aliasEt.setText("");
         mImageList.clear();
 
         viewBinding.imgContainer.removeAllViews();
@@ -230,6 +233,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         mDebitAmt = viewBinding.debitAmtEt.getText().toString();
         mCreditWgt = viewBinding.creditWeightEt.getText().toString();
         mDebitWgt = viewBinding.debitWeightEt.getText().toString();
+        mAliasNo = !TextUtils.isEmpty(viewBinding.aliasEt.getText().toString()) ? Long.parseLong(viewBinding.aliasEt.getText().toString()) : 0;
 
         if (TextUtils.isEmpty(mParticular)) {
             Toast.makeText(this, "Particular is empty", Toast.LENGTH_SHORT).show();
@@ -248,15 +252,14 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
-                Bitmap bitmap = BitmapFactory.decodeFile(filePath);
-                mImageFilePath = FileUtils.storeImage(AddEditItemActivity.this, bitmap);
-                return mImageFilePath;
+                return ImageCompressionUtil.getInstance(AddEditItemActivity.this).compressImage(filePath);
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
-                mImageList.add(mImageFilePath);
+                mImageFilePath = s;
+                mImageList.add(s);
                 addMultipleImages();
             }
         }.execute();
