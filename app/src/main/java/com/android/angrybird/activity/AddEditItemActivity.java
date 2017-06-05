@@ -134,7 +134,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             item.setDebitAmount(mDebitAmt);
             item.setCrediWeight(mCreditWgt);
             item.setDebitWeight(mDebitWgt);
-            item.setAliasNo(mAliasNo);
+            item.setAliasNo(mAliasNo == 0 ? item.getItemId() : mAliasNo);
             DBManager.INSTANCE.getDaoSession().getItemDao().update(item);
             updateImages(item.getItemId());
             finish();
@@ -157,6 +157,11 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             item.setAliasNo(mAliasNo);
 
             Long id = DBManager.INSTANCE.getDaoSession().getItemDao().insert(item);
+            if (mAliasNo == 0) {
+                Item query = DBManager.INSTANCE.getDaoSession().getItemDao().load(id);
+                query.setAliasNo(query.getItemId());
+                DBManager.INSTANCE.getDaoSession().update(query);
+            }
             insertImages(id);
             showAddMoreDialog();
         }

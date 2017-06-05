@@ -16,7 +16,6 @@ import com.android.angrybird.database.Item;
 import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityItemListBinding;
-import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
@@ -119,7 +118,8 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 DBManager.INSTANCE.getDaoSession().getItemDao().deleteByKey(item.getItemId());
-                DBManager.INSTANCE.getDaoSession().getItemAssetDao().deleteByKey(itemAsset.getItemAssetId());
+                if (null != itemAsset)
+                    DBManager.INSTANCE.getDaoSession().getItemAssetDao().deleteByKey(itemAsset.getItemAssetId());
                 new GetAllItemList().execute();
                 dialogInterface.cancel();
             }
@@ -159,12 +159,10 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
         @Override
         protected void onPostExecute(List<Item> itemList) {
             super.onPostExecute(itemList);
-            if(Utils.listNotNull(itemList)) {
-                setHeaderAmountValue(itemList);
-                ItemListAdapter adapter = new ItemListAdapter(ItemListActivity.this, itemList);
-                adapter.setOnItemClickListener(ItemListActivity.this);
-                viewBinding.itemListRv.setAdapter(adapter);
-            }
+            setHeaderAmountValue(itemList);
+            ItemListAdapter adapter = new ItemListAdapter(ItemListActivity.this, itemList);
+            adapter.setOnItemClickListener(ItemListActivity.this);
+            viewBinding.itemListRv.setAdapter(adapter);
         }
     }
 }

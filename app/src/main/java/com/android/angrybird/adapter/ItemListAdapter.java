@@ -23,6 +23,7 @@ import com.android.angrybird.fragment.ItemDetailFragment;
 
 import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     public ItemListAdapter(Context context, List<Item> itemList)
     {
         mContext = context;
-        mItemList = itemList;
+        mItemList = new ArrayList<>(itemList);
     }
 
     public void setOnItemClickListener(OnItemActionListener listener)
@@ -75,7 +76,8 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             }
         });
 
-        holder.binding.sNoTxt.setText(String.valueOf(item.getAliasNo()));
+        long itemId = item.getAliasNo();
+        holder.binding.sNoTxt.setText(String.valueOf(itemId));
         int debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Integer.parseInt(item.getDebitAmount());
         int creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Integer.parseInt(item.getCreditAmount());
         String balance = String.valueOf(debitAmt - creditAmt);
