@@ -70,7 +70,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             @Override
             public void onClick(View view) {
 
-                if(null != item && Utils.listNotNull(mItemAssetList))
+                if (null != item)
                     updateItemToDatabase();
                 else
                     addItemToDatabase();
@@ -104,7 +104,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
 
     private void setItemDataForEdit()
     {
-        if(Utils.listNotNull(mItemAssetList) && null != item)
+        if (null != item)
         {
             if(null != mActionBar)
                 mActionBar.setTitle("Edit Item");
