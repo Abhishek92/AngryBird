@@ -222,7 +222,55 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                    }
                } else if (requestCode == CAMERA_REQUEST
                        && resultCode == Activity.RESULT_OK) {
-                   String[] projection = {MediaStore.Images.Media.DATA};
+
+                   String[] projection = {
+                           MediaStore.Images.Thumbnails._ID,  // The columns we want
+                           MediaStore.Images.Thumbnails.IMAGE_ID,
+                           MediaStore.Images.Thumbnails.KIND,
+                           MediaStore.Images.Thumbnails.DATA};
+                   String selection = MediaStore.Images.Thumbnails.KIND + "=" + // Select only mini's
+                           MediaStore.Images.Thumbnails.MINI_KIND;
+
+                   String sort = MediaStore.Images.Thumbnails._ID + " DESC";
+
+                   Cursor myCursor = this.managedQuery(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, projection, selection, null, sort);
+
+                   long imageId = 0l;
+                   long thumbnailImageId = 0l;
+                   String thumbnailPath = "";
+
+                   try {
+                       myCursor.moveToFirst();
+                       imageId = myCursor.getLong(myCursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.IMAGE_ID));
+                       thumbnailImageId = myCursor.getLong(myCursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails._ID));
+                       thumbnailPath = myCursor.getString(myCursor.getColumnIndexOrThrow(MediaStore.Images.Thumbnails.DATA));
+                   } finally {
+                       myCursor.close();
+                   }
+
+
+                   String[] largeFileProjection = {
+                           MediaStore.Images.ImageColumns._ID,
+                           MediaStore.Images.ImageColumns.DATA
+                   };
+
+                   String largeFileSort = MediaStore.Images.ImageColumns._ID + " DESC";
+                   myCursor = this.managedQuery(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, largeFileProjection, null, null, largeFileSort);
+                   String largeImagePath = "";
+
+                   try {
+                       myCursor.moveToFirst();
+                       largeImagePath = myCursor.getString(myCursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATA));
+                   } finally {
+                       myCursor.close();
+                   }
+                   // These are the two URI's you'll be interested in. They give you a handle to the actual images
+                   Uri uriLargeImage = Uri.withAppendedPath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, String.valueOf(imageId));
+                   Uri uriThumbnailImage = Uri.withAppendedPath(MediaStore.Images.Thumbnails.EXTERNAL_CONTENT_URI, String.valueOf(thumbnailImageId));
+
+                   onLoadImage(largeImagePath);
+
+                  /* String[] projection = {MediaStore.Images.Media.DATA};
 
                    Cursor cursor = getContentResolver().query(mCapturedImageURI,
                            projection, null, null, null);
@@ -231,7 +279,7 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                    cursor.moveToFirst();
                    String path = cursor.getString(column_index_data);
                    onLoadImage(path);
-                   cursor.close();
+                   cursor.close();*/
 
                }
            }
