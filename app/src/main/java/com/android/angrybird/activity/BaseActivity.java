@@ -170,8 +170,8 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
-        intent.putExtra("return-data", false);
+        //intent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
+        //intent.putExtra("return-data", false);
 
         startActivityForResult(intent, CAMERA_REQUEST);
     }
