@@ -2,9 +2,7 @@ package com.android.angrybird.fragment;
 
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -12,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
@@ -103,23 +100,13 @@ public class ItemDetailFragment extends DialogFragment {
                 imageView.setTag(mImageList.get(i));
             }
 
+        } else {
+            mBinding.horizontalSv.setVisibility(View.GONE);
         }
     }
 
     protected void showImage(String filePath) {
-        Dialog builder = new Dialog(getActivity());
-        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        builder.getWindow().setBackgroundDrawable(
-                new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                //nothing;
-            }
-        });
-        builder.setContentView(R.layout.img_layout);
-        ImageView imageView = (ImageView) builder.findViewById(R.id.img);
-        Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(imageView);
-        builder.show();
+        ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(filePath);
+        imageDialogFragment.show(getActivity().getSupportFragmentManager(), ImageDialogFragment.TAG);
     }
 }

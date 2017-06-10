@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,11 +19,9 @@ import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.HeaderLayoutViewBinding;
 import com.android.angrybird.databinding.UserListItemLayoutBinding;
+import com.android.angrybird.fragment.ImageDialogFragment;
 import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import org.parceler.Parcels;
 
@@ -80,20 +79,18 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                         mListener.onItemSelected(user);
                 }
             });
-            Glide.with(mContext).load(user.getUserImagePath()).listener(new RequestListener<String, GlideDrawable>() {
+            Glide.with(mContext).load(user.getUserImagePath()).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
+            holder.binding.avatarImg.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                    return false;
+                public void onClick(View view) {
+                    ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(user.getUserImagePath());
+                    imageDialogFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), ImageDialogFragment.TAG);
                 }
-
-                @Override
-                public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                    return false;
-                }
-            }).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(holder.binding.avatarImg);
+            });
             holder.binding.title.setText(String.format("%s %s %s", user.getFirstName(), user.getMiddleName(), user.getLastName()));
             holder.binding.contact.setText("Contact no: ".concat(user.getContactOne()));
             holder.binding.address.setText("Address: ".concat(user.getAddress()));
+            holder.binding.aliasNo.setText("Alias No: ".concat(user.getAliasNo() + ""));
             setUpPopupMenu(holder, user);
         }
     }

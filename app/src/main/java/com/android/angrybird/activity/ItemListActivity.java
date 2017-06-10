@@ -134,18 +134,32 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
     private void setHeaderAmountValue(List<Item> itemList) {
         int totalDebitAmt = 0;
         int totalCreditAmt = 0;
+        int totalDebitWeight = 0;
+        int totalCeditWeight = 0;
         for (int i = 0; i < itemList.size(); i++) {
             Item item = itemList.get(i);
             int debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Integer.parseInt(item.getDebitAmount());
             int creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Integer.parseInt(item.getCreditAmount());
+
+            int debitWgt = TextUtils.isEmpty(item.getDebitWeight()) ? 0 : Integer.parseInt(item.getDebitWeight());
+            int creditWgt = TextUtils.isEmpty(item.getCrediWeight()) ? 0 : Integer.parseInt(item.getCrediWeight());
+
             totalDebitAmt += debitAmt;
             totalCreditAmt += creditAmt;
+
+            totalDebitWeight += debitWgt;
+            totalCeditWeight += creditWgt;
         }
         int balance = totalDebitAmt - totalCreditAmt;
+        int wgtbalance = totalDebitWeight - totalCeditWeight;
 
         viewBinding.personHeaderView.debitAmt.setText(String.format("Debit Amount:  %d", totalDebitAmt));
         viewBinding.personHeaderView.creditAmt.setText(String.format("Credit Amount:  %d", totalCreditAmt));
-        viewBinding.personHeaderView.balance.setText(String.format("Balance:  %d", balance));
+        viewBinding.personHeaderView.balance.setText(String.format("Amount Balance:  %d", balance));
+
+        viewBinding.personHeaderView.debitWgt.setText(String.format("Debit Weight:  %d", totalDebitWeight));
+        viewBinding.personHeaderView.creditWgt.setText(String.format("Credit Weight:  %d", totalCeditWeight));
+        viewBinding.personHeaderView.wgtbalance.setText(String.format("Weight Balance:  %d", wgtbalance));
     }
 
     private class GetAllItemList extends AsyncTask<Void, Void, List<Item>>

@@ -1,54 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <data>
-
-        <variable
-            name="data"
-            type="com.android.angrybird.database.Item" />
-    </data>
-
-
-<RelativeLayout
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground">
+    android:orientation="vertical">
+
     <LinearLayout
-        android:id="@+id/itemContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:orientation="horizontal"
-        >
+        android:layout_marginRight="5dp">
 
         <TextView
-            android:id="@+id/s_no_txt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:textSize="14sp" />
-
-        <View
-            android:id="@+id/view"
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:alpha="0.33"
-            android:background="@android:color/black" />
-
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:gravity="center"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp"
-            android:text="@{data.particular}"
+            android:text="S.No"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <View
@@ -64,7 +34,27 @@
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="@{data.date}"
+            android:text="Particular"
+            android:textColor="@android:color/black"
+
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="Date"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <View
@@ -80,7 +70,8 @@
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="@{data.debitAmount}"
+            android:text="D.Amt"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <View
@@ -88,6 +79,7 @@
             android:layout_height="match_parent"
             android:alpha="0.33"
             android:background="@android:color/black" />
+
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -95,7 +87,26 @@
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="@{data.creditAmount}"
+            android:text="C.Amt"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
+
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="D.Wgt"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
 
         <View
@@ -105,43 +116,40 @@
             android:background="@android:color/black" />
 
         <TextView
-            android:id="@+id/balance_txt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="C.Wgt"
+            android:textColor="@android:color/black"
+            android:textSize="14sp" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:alpha="0.33"
+            android:background="@android:color/black" />
+
+
+        <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
+            android:text="Balance"
+            android:textColor="@android:color/black"
             android:textSize="14sp" />
-
-
     </LinearLayout>
 
-    <ImageView
-        android:id="@+id/edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/itemContainer"
-        android:padding="10dp"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_edit_black_24dp" />
-
-    <ImageView
-        android:id="@+id/delete"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/itemContainer"
-        android:layout_toRightOf="@+id/edit"
-        android:padding="10dp"
-        android:visibility="gone"
-        app:srcCompat="@drawable/ic_delete_forever_black_24dp"/>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_below="@id/edit"
         android:alpha="0.33"
         android:background="@android:color/black" />
 
-</RelativeLayout>
-</layout>
+</LinearLayout>
