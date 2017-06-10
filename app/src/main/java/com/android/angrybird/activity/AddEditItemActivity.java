@@ -25,8 +25,11 @@ import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding> implements DatePickerFragment.IDateSetListener {
 
@@ -50,6 +53,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     private List<ItemAsset> mItemAssetList = new ArrayList<>();
     private List<String> mImageList = new ArrayList<>();
     private String userName;
+    private Map<String, LinearLayout> mImageContainerMap = new WeakHashMap<>();
 
 
     @Override
@@ -204,11 +208,11 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
 
     private void updateImages(Long id)
     {
-        if (mImageList.size() > mItemAssetList.size()) {
+        if (mImageList.size() >= mItemAssetList.size()) {
             int diff = mImageList.size() - mItemAssetList.size();
-            List<String> imageList = mImageList.subList(mItemAssetList.size(), mImageList.size());
+            List<String> imageList = diff == 0 ? mImageList : mImageList.subList(mItemAssetList.size(), mImageList.size());
             List<ItemAsset> itemAssetList = new ArrayList<>();
-            for (int i = 0; i < diff; i++) {
+            for (int i = 0; i < (diff == 0 ? mImageList.size() : diff); i++) {
                 ItemAsset itemAsset = new ItemAsset();
                 itemAsset.setItemId(id);
                 itemAsset.setImagePath(imageList.get(i));
@@ -289,9 +293,23 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             for (int i = 0; i < mImageList.size(); i++) {
                 LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.image_item_layout, null);
                 ImageView imageView = (ImageView) linearLayout.findViewById(R.id.img);
+                ImageView removeImg = (ImageView) linearLayout.findViewById(R.id.removeImg);
                 viewBinding.imgContainer.addView(linearLayout);
                 Glide.with(this).load(mImageList.get(i)).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(imageView);
+
                 imageView.setTag(mImageList.get(i));
+                removeImg.setTag(mImageList.get(i));
+
+                mImageContainerMap.put(mImageList.get(i), linearLayout);
+
+                removeImg.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String imagePath = view.getTag().toString();
+                        removeImage(imagePath);
+                    }
+                });
+
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -309,6 +327,14 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             });
             viewBinding.imgContainer.addView(linearLayout);
         }
+    }
+
+    private void removeImage(String imagePath) {
+        mImageList.remove(imagePath);
+        File imgFile = new File(imagePath);
+        if (imgFile.exists())
+            imgFile.delete();
+        viewBinding.imgContainer.removeView(mImageContainerMap.get(imagePath));
     }
 
     @Override

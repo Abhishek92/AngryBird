@@ -182,7 +182,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         mUserList = new ArrayList<>();
         queryText = queryText.toLowerCase();
         for (User item : mBackupList) {
-            if (item.getFirstName().toLowerCase().contains(queryText) && item.getGender() != null)
+            if (item.getFirstName().toLowerCase().contains(queryText) || item.getContactOne().toLowerCase().contains(queryText)
+                    || item.getContactTwo().toLowerCase().contains(queryText) || String.valueOf(item.getAliasNo()).toLowerCase().contains(queryText)
+                    && item.getGender() != null)
                 mUserList.add(item);
         }
         mUserList = getListWithHeader(mUserList);
