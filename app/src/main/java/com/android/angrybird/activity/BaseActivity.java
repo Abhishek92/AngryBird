@@ -170,8 +170,8 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        //intent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
-        //intent.putExtra("return-data", false);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mCapturedImageURI);
+        intent.putExtra("return-data", false);
 
         startActivityForResult(intent, CAMERA_REQUEST);
     }
@@ -199,9 +199,8 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-           if(null != data) {
                if ((requestCode == GALLERY_REQUEST || requestCode == GALLERY_KITKAT_INTENT_CALLED)
-                       && resultCode == Activity.RESULT_OK) {
+                       && resultCode == Activity.RESULT_OK && null != data) {
                    if (requestCode == GALLERY_REQUEST) {
                        mCapturedImageURI = data.getData();
                        String[] column = {MediaStore.Images.Media.DATA};
@@ -282,7 +281,6 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
                    cursor.close();*/
 
                }
-           }
 
         } catch (Exception e) {
             e.printStackTrace();

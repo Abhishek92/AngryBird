@@ -58,8 +58,16 @@ public class ImageCompressionUtil {
 
         float maxHeight = 1080.0f;
         float maxWidth = 720.0f;
+
+        if (actualHeight == 0)
+            actualHeight = (int) maxHeight;
+
+        if (actualWidth == 0)
+            actualWidth = (int) maxWidth;
+
         float imgRatio = actualWidth / actualHeight;
         float maxRatio = maxWidth / maxHeight;
+
 
         //      width and height values are set maintaining the aspect ratio of the image
 
