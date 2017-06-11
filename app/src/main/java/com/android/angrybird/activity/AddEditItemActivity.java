@@ -208,7 +208,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
 
     private void updateImages(Long id)
     {
-        if (mImageList.size() >= mItemAssetList.size()) {
+        if (mImageList.size() > mItemAssetList.size()) {
             int diff = mImageList.size() - mItemAssetList.size();
             List<String> imageList = diff == 0 ? mImageList : mImageList.subList(mItemAssetList.size(), mImageList.size());
             List<ItemAsset> itemAssetList = new ArrayList<>();
@@ -219,6 +219,8 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
                 itemAssetList.add(itemAsset);
             }
             DBManager.INSTANCE.getDaoSession().getItemAssetDao().insertInTx(itemAssetList);
+        } else {
+            DBManager.INSTANCE.getDaoSession().getItemAssetDao().updateInTx(mItemAssetList);
         }
     }
 
@@ -335,6 +337,14 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         if (imgFile.exists())
             imgFile.delete();
         viewBinding.imgContainer.removeView(mImageContainerMap.get(imagePath));
+
+        for (int i = 0; i < mItemAssetList.size(); i++) {
+            ItemAsset itemAsset = mItemAssetList.get(i);
+            if (itemAsset.getImagePath().equalsIgnoreCase(imagePath)) {
+                mItemAssetList.remove(itemAsset);
+                DBManager.INSTANCE.getDaoSession().getItemAssetDao().delete(itemAsset);
+            }
+        }
     }
 
     @Override

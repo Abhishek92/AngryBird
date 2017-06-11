@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
     private List<User> mUserList;
     private List<User> mBackupList;
     private OnItemActionListener mListener;
+
 
     public UserListAdapter(Context context, List<User> userList)
     {
@@ -182,8 +184,11 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
         mUserList = new ArrayList<>();
         queryText = queryText.toLowerCase();
         for (User item : mBackupList) {
-            if (item.getFirstName().toLowerCase().contains(queryText) || item.getContactOne().toLowerCase().contains(queryText)
-                    || item.getContactTwo().toLowerCase().contains(queryText) || String.valueOf(item.getAliasNo()).toLowerCase().contains(queryText)
+            String contactOne = TextUtils.isEmpty(item.getContactOne()) ? "" : item.getContactOne();
+            String contactTwo = TextUtils.isEmpty(item.getContactTwo()) ? "" : item.getContactTwo();
+            String aliasNo = item.getAliasNo() == null ? String.valueOf("0") : String.valueOf(item.getAliasNo());
+            if (item.getFirstName().toLowerCase().contains(queryText) || contactOne.toLowerCase().contains(queryText)
+                    || contactTwo.toLowerCase().contains(queryText) || aliasNo.toLowerCase().contains(queryText)
                     && item.getGender() != null)
                 mUserList.add(item);
         }
