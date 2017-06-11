@@ -3,7 +3,6 @@ package com.android.angrybird.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -13,7 +12,6 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,15 +22,12 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Window;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.android.angrybird.R;
+import com.android.angrybird.fragment.ImageDialogFragment;
 import com.android.angrybird.receiver.ScreenTrackReceiver;
 import com.android.angrybird.util.FileUtils;
 import com.android.angrybird.util.SaveBitmapTask;
-import com.bumptech.glide.Glide;
 
 /**
  * Created by hp pc on 04-05-2017.
@@ -125,21 +120,10 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
         new SaveBitmapTask(this).execute(filePath);
     }
 
+
     protected void showImage(String filePath) {
-        Dialog builder = new Dialog(this);
-        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        builder.getWindow().setBackgroundDrawable(
-                new ColorDrawable(android.graphics.Color.TRANSPARENT));
-        builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                //nothing;
-            }
-        });
-        builder.setContentView(R.layout.img_layout);
-        ImageView imageView = (ImageView) builder.findViewById(R.id.img);
-        Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(imageView);
-        builder.show();
+        ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(filePath);
+        imageDialogFragment.show(getSupportFragmentManager(), ImageDialogFragment.TAG);
     }
 
     private void showImagePicker()
