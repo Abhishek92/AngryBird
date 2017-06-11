@@ -17,9 +17,6 @@ import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityItemListBinding;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 
 import org.parceler.Parcels;
 
@@ -49,17 +46,7 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
     }
 
     private void setUpHeaderView() {
-        Glide.with(this).load(user.getUserImagePath()).listener(new RequestListener<String, GlideDrawable>() {
-            @Override
-            public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                return false;
-            }
-
-            @Override
-            public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                return false;
-            }
-        }).placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.personHeaderView.userImg);
+        Glide.with(this).load(user.getUserImagePath()).placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.personHeaderView.userImg);
         if (null != getSupportActionBar()) {
             getSupportActionBar().setTitle(user.getFirstName().concat(" ").concat(user.getLastName()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
