@@ -78,10 +78,9 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
 
         long itemId = item.getAliasNo();
         holder.binding.sNoTxt.setText(String.valueOf(itemId));
-        int debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Integer.parseInt(item.getDebitAmount());
-        int creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Integer.parseInt(item.getCreditAmount());
-        String balance = String.valueOf(debitAmt - creditAmt);
-        holder.binding.balanceTxt.setText(balance);
+        double debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Double.parseDouble(item.getDebitAmount());
+        double creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Double.parseDouble(item.getCreditAmount());
+        holder.binding.balanceTxt.setText(String.format("%.2f", debitAmt - creditAmt));
         ItemAsset itemAsset = DBManager.INSTANCE.getDaoSession().getItemAssetDao().load(item.getItemId());
         setEditAndDelete(holder, item, itemAsset);
     }

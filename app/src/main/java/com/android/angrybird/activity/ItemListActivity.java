@@ -119,17 +119,17 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
     }
 
     private void setHeaderAmountValue(List<Item> itemList) {
-        int totalDebitAmt = 0;
-        int totalCreditAmt = 0;
-        int totalDebitWeight = 0;
-        int totalCeditWeight = 0;
+        double totalDebitAmt = 0;
+        double totalCreditAmt = 0;
+        double totalDebitWeight = 0;
+        double totalCeditWeight = 0;
         for (int i = 0; i < itemList.size(); i++) {
             Item item = itemList.get(i);
-            int debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Integer.parseInt(item.getDebitAmount());
-            int creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Integer.parseInt(item.getCreditAmount());
+            double debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Double.parseDouble(item.getDebitAmount());
+            double creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Double.parseDouble(item.getCreditAmount());
 
-            int debitWgt = TextUtils.isEmpty(item.getDebitWeight()) ? 0 : Integer.parseInt(item.getDebitWeight());
-            int creditWgt = TextUtils.isEmpty(item.getCrediWeight()) ? 0 : Integer.parseInt(item.getCrediWeight());
+            double debitWgt = TextUtils.isEmpty(item.getDebitWeight()) ? 0 : Double.parseDouble(item.getDebitWeight());
+            double creditWgt = TextUtils.isEmpty(item.getCrediWeight()) ? 0 : Double.parseDouble(item.getCrediWeight());
 
             totalDebitAmt += debitAmt;
             totalCreditAmt += creditAmt;
@@ -137,16 +137,16 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
             totalDebitWeight += debitWgt;
             totalCeditWeight += creditWgt;
         }
-        int balance = totalDebitAmt - totalCreditAmt;
-        int wgtbalance = totalDebitWeight - totalCeditWeight;
+        double balance = totalDebitAmt - totalCreditAmt;
+        double wgtbalance = totalDebitWeight - totalCeditWeight;
 
-        viewBinding.personHeaderView.debitAmt.setText(String.format("Debit Amount:  %d", totalDebitAmt));
-        viewBinding.personHeaderView.creditAmt.setText(String.format("Credit Amount:  %d", totalCreditAmt));
-        viewBinding.personHeaderView.balance.setText(String.format("Amount Balance:  %d", balance));
+        viewBinding.personHeaderView.debitAmt.setText(String.format("Debit Amount:  %.2f", totalDebitAmt));
+        viewBinding.personHeaderView.creditAmt.setText(String.format("Credit Amount:  %.2f", totalCreditAmt));
+        viewBinding.personHeaderView.balance.setText(String.format("Amount Balance:  %.2f", balance));
 
-        viewBinding.personHeaderView.debitWgt.setText(String.format("Debit Weight:  %d", totalDebitWeight));
-        viewBinding.personHeaderView.creditWgt.setText(String.format("Credit Weight:  %d", totalCeditWeight));
-        viewBinding.personHeaderView.wgtbalance.setText(String.format("Weight Balance:  %d", wgtbalance));
+        viewBinding.personHeaderView.debitWgt.setText(String.format("Debit Weight:  %.2f", totalDebitWeight));
+        viewBinding.personHeaderView.creditWgt.setText(String.format("Credit Weight:  %.2f", totalCeditWeight));
+        viewBinding.personHeaderView.wgtbalance.setText(String.format("Weight Balance:  %.2f", wgtbalance));
     }
 
     private class GetAllItemList extends AsyncTask<Void, Void, List<Item>>
