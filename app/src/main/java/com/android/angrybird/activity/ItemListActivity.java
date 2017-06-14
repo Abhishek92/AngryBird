@@ -47,6 +47,12 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
 
     private void setUpHeaderView() {
         Glide.with(this).load(user.getUserImagePath()).placeholder(R.drawable.ic_account_circle_black_24dp).into(viewBinding.personHeaderView.userImg);
+        viewBinding.personHeaderView.userImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showImage(user.getUserImagePath());
+            }
+        });
         if (null != getSupportActionBar()) {
             getSupportActionBar().setTitle(user.getFirstName().concat(" ").concat(user.getLastName()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
