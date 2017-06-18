@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.Item;
 import com.android.angrybird.database.User;
-import com.android.angrybird.util.Utils;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
@@ -154,6 +153,7 @@ public class PdfCreator {
         addEmptyLine(paragraph, 1);
 
         PdfPTable pdfPTable = new PdfPTable(8);
+        pdfPTable.setWidthPercentage(100);
         PdfPCell c1 = new PdfPCell(new Phrase("S.No"));
         c1.setHorizontalAlignment(Element.ALIGN_CENTER);
         pdfPTable.addCell(c1);
@@ -191,20 +191,26 @@ public class PdfCreator {
 
         for (int i = 0; i < itemList.size(); i++) {
             Item item = itemList.get(i);
-            pdfPTable.addCell(String.valueOf(item.getAliasNo()));
-            pdfPTable.addCell(item.getParticular());
-            pdfPTable.addCell(Utils.getFormattedDate(item.getCreatedDate()));
-            pdfPTable.addCell(item.getDebitAmount());
-            pdfPTable.addCell(item.getCreditAmount());
-            pdfPTable.addCell(item.getDebitWeight());
-            pdfPTable.addCell(item.getCrediWeight());
+            addColumn(pdfPTable, String.valueOf(item.getAliasNo()));
+            addColumn(pdfPTable, item.getParticular());
+            addColumn(pdfPTable, item.getCreatedDate());
+            addColumn(pdfPTable, item.getDebitAmount());
+            addColumn(pdfPTable, item.getCreditAmount());
+            addColumn(pdfPTable, item.getDebitWeight());
+            addColumn(pdfPTable, item.getCrediWeight());
             double debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Double.parseDouble(item.getDebitAmount());
             double creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Double.parseDouble(item.getCreditAmount());
-            pdfPTable.addCell(String.format("%.2f", debitAmt - creditAmt));
+            addColumn(pdfPTable, String.format("%.2f", debitAmt - creditAmt));
         }
 
         paragraph.add(pdfPTable);
         document.add(paragraph);
+    }
+
+    private void addColumn(PdfPTable pdfPTable, String value) {
+        PdfPCell pdfPCell = new PdfPCell(new Phrase(value));
+        pdfPCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(pdfPCell);
     }
 
 }

@@ -143,10 +143,12 @@ public class AddEditUserActivity extends BaseActivity<ActivityAddEditUserBinding
             user.setGender(gender);
             user.setModifiedDate(DateTimeUtil.getCurrentDateTime());
             user.setStatus(false);
-            if (!TextUtils.isEmpty(getImageFilePath()) && !user.getUserImagePath().equals(getImageFilePath()))
+            if (TextUtils.isEmpty(user.getUserImagePath())) {
                 user.setUserImagePath(getImageFilePath());
-            user.setAliasNo(mAliasNo);
+            } else if (!TextUtils.isEmpty(getImageFilePath()) && !(user.getUserImagePath().equals(getImageFilePath())))
+                user.setUserImagePath(getImageFilePath());
 
+            user.setAliasNo(mAliasNo);
             DBManager.INSTANCE.getDaoSession().getUserDao().update(user);
             finish();
         }

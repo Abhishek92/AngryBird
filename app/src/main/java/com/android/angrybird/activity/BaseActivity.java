@@ -21,6 +21,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -122,8 +123,10 @@ public abstract class BaseActivity<T extends ViewDataBinding> extends AppCompatA
 
 
     protected void showImage(String filePath) {
-        ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(filePath);
-        imageDialogFragment.show(getSupportFragmentManager(), ImageDialogFragment.TAG);
+        if (!TextUtils.isEmpty(filePath)) {
+            ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(filePath);
+            imageDialogFragment.show(getSupportFragmentManager(), ImageDialogFragment.TAG);
+        }
     }
 
     private void showImagePicker()

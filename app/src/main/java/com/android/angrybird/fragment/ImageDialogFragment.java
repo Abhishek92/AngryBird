@@ -73,7 +73,7 @@ public class ImageDialogFragment extends DialogFragment {
                     Utils.shareImage(getActivity(), outputFileName);
                 }
             });
-            Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(photoView);
+            Glide.with(this).load(filePath).placeholder(R.drawable.ic_account_circle_black_24dp).into(photoView);
         } else {
             dismiss();
         }

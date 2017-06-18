@@ -1,6 +1,5 @@
 package com.android.angrybird.util;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,6 +25,7 @@ public final class DateTimeUtil {
 
     public static String getCurrentDateTime()
     {
-        return DateFormat.getDateTimeInstance().format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        return sdf.format(new Date());
     }
 }
