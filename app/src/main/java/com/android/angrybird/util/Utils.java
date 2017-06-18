@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -26,5 +28,15 @@ public final class Utils {
         share.setType("image/jpeg");
         share.putExtra(Intent.EXTRA_STREAM, Uri.parse(filePath));
         context.startActivity(Intent.createChooser(share, "Share Image"));
+    }
+
+    public static String getFormattedDate(String date) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-DD");
+        try {
+            return simpleDateFormat.format(simpleDateFormat.parse(date));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

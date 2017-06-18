@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,16 +63,20 @@ public class ImageDialogFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         final String filePath = getArguments().getString(KEY_FILE_PATH);
-        new FileCopyAsyncTask().execute(filePath);
+        if (!TextUtils.isEmpty(filePath)) {
+            new FileCopyAsyncTask().execute(filePath);
 
-        PhotoView photoView = (PhotoView) view.findViewById(R.id.photo);
-        view.findViewById(R.id.share_option).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Utils.shareImage(getActivity(), outputFileName);
-            }
-        });
-        Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(photoView);
+            PhotoView photoView = (PhotoView) view.findViewById(R.id.photo);
+            view.findViewById(R.id.share_option).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Utils.shareImage(getActivity(), outputFileName);
+                }
+            });
+            Glide.with(this).load(filePath).centerCrop().placeholder(R.drawable.ic_account_circle_black_24dp).into(photoView);
+        } else {
+            dismiss();
+        }
     }
 
     private class FileCopyAsyncTask extends AsyncTask<String, Void, String> {
