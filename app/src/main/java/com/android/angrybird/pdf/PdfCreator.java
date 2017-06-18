@@ -33,6 +33,7 @@ public class PdfCreator {
     private String userId;
     private User user;
     private Context mContext;
+    private Item item;
 
     private PdfCreator(String userId, User user, Context context) {
         this.userId = userId;
@@ -40,14 +41,80 @@ public class PdfCreator {
         mContext = context;
     }
 
+    private PdfCreator(Item item, Context context) {
+        this.item = item;
+        mContext = context;
+    }
+
     public static PdfCreator createPdf(String userId, User user, Context context) {
         return new PdfCreator(userId, user, context);
+    }
+
+    public static PdfCreator createPdf(Item item, Context context) {
+        return new PdfCreator(item, context);
     }
 
     private static void addEmptyLine(Paragraph paragraph, int number) {
         for (int i = 0; i < number; i++) {
             paragraph.add(new Paragraph(" "));
         }
+    }
+
+    public void createPdfForItems() {
+        new AsyncTask<String, Void, String>() {
+            private ProgressDialog mDialog;
+            private String FILE_NAME = Environment.getExternalStorageDirectory() + "/" + item.getAliasNo() + ".pdf";
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mDialog = new ProgressDialog(mContext);
+                mDialog.setMessage("Generating Pdf");
+                mDialog.setCancelable(false);
+                mDialog.show();
+            }
+
+            @Override
+            protected String doInBackground(String... params) {
+
+                try {
+                    Document document = new Document();
+                    PdfWriter.getInstance(document, new FileOutputStream(FILE_NAME));
+                    document.open();
+                    addMetaData(document);
+                    setPdfForItem(item, document);
+                    document.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+
+                return "done";
+            }
+
+            @Override
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
+                if (mDialog.isShowing())
+                    mDialog.cancel();
+                if (TextUtils.isEmpty(result)) {
+                    Toast.makeText(mContext, "Error generating pdf..", Toast.LENGTH_SHORT).show();
+                } else {
+                    sharePdf(FILE_NAME);
+                }
+            }
+
+
+        }.execute(userId);
+    }
+
+    private void sharePdf(String fileName) {
+        Uri uri = Uri.parse(fileName);
+        Intent share = new Intent();
+        share.setAction(Intent.ACTION_SEND);
+        share.setType("application/pdf");
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        mContext.startActivity(share);
     }
 
     public void createAndSharePdf() {
@@ -105,6 +172,60 @@ public class PdfCreator {
         document.addKeywords("Java, PDF, iText");
         document.addAuthor("AngryBird App");
         document.addCreator("AngryBird App");
+    }
+
+    private void setPdfForItem(Item item, Document document) throws DocumentException {
+        Paragraph paragraph = new Paragraph();
+
+        PdfPTable pdfPTable = new PdfPTable(8);
+        pdfPTable.setWidthPercentage(100);
+        PdfPCell c1 = new PdfPCell(new Phrase("S.No"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Particular"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Date"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Debit Amount"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Credit Amount"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Debit Weight"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Credit Weight"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        c1 = new PdfPCell(new Phrase("Balance"));
+        c1.setHorizontalAlignment(Element.ALIGN_CENTER);
+        pdfPTable.addCell(c1);
+
+        pdfPTable.setHeaderRows(1);
+
+        addColumn(pdfPTable, String.valueOf(item.getAliasNo()));
+        addColumn(pdfPTable, item.getParticular());
+        addColumn(pdfPTable, item.getCreatedDate());
+        addColumn(pdfPTable, item.getDebitAmount());
+        addColumn(pdfPTable, item.getCreditAmount());
+        addColumn(pdfPTable, item.getDebitWeight());
+        addColumn(pdfPTable, item.getCrediWeight());
+        double debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Double.parseDouble(item.getDebitAmount());
+        double creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Double.parseDouble(item.getCreditAmount());
+        addColumn(pdfPTable, String.format("%.2f", debitAmt - creditAmt));
+
+        paragraph.add(pdfPTable);
+        document.add(paragraph);
     }
 
     private void setHeaderAmountValue(List<Item> itemList, Document document, User user) throws DocumentException {

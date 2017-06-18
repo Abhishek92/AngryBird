@@ -18,6 +18,7 @@ import com.android.angrybird.database.DBManager;
 import com.android.angrybird.database.Item;
 import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.databinding.FragmentItemDetailBinding;
+import com.android.angrybird.pdf.PdfCreator;
 import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
 
@@ -65,7 +66,7 @@ public class ItemDetailFragment extends DialogFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mBinding = DataBindingUtil.bind(view);
-        Item item = Parcels.unwrap(getArguments().getParcelable(KEY_ITEM_DATA));
+        final Item item = Parcels.unwrap(getArguments().getParcelable(KEY_ITEM_DATA));
         mBinding.setData(item);
         if (null != item) {
             mItemAssetList = DBManager.INSTANCE.getDaoSession().getItemAssetDao().queryRaw("WHERE ITEM_ID = ?", String.valueOf(item.getItemId()));
@@ -75,6 +76,14 @@ public class ItemDetailFragment extends DialogFragment {
 
             addMultipleImages();
         }
+
+        mBinding.shareOption.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                PdfCreator pdfCreator = PdfCreator.createPdf(item, getActivity());
+                pdfCreator.createPdfForItems();
+            }
+        });
 
     }
 
