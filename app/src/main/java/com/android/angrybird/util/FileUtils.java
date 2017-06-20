@@ -554,7 +554,7 @@ public class FileUtils {
 
             if (sd.canWrite()) {
                 String currentDBPath = "//data//com.android.angrybird//databases//angrybird-db";
-                String backupDBPath = "angrybird-db";
+                String backupDBPath = "AngryBirdData/angrybird-db";
                 File currentDB = new File(data, currentDBPath);
                 File backupDB = new File(sd, backupDBPath);
 
@@ -666,7 +666,7 @@ public class FileUtils {
 
     public static File creatImagesFolderExternalStorage()
     {
-        String folder_main = "AngryBirdImages";
+        String folder_main = "AngryBirdData";
         File f = new File(Environment.getExternalStorageDirectory(), folder_main);
         if (!f.exists()) {
             f.mkdirs();

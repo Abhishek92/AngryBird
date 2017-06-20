@@ -3,12 +3,14 @@ package com.android.angrybird.activity;
 import android.Manifest;
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
@@ -149,7 +151,7 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
 
     private void copyDataBase()
     {
-        new AsyncTask<Void,Void,Void>()
+        new AsyncTask<Void, Void, String>()
         {
             @Override
             protected void onPreExecute() {
@@ -158,21 +160,35 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
             }
 
             @Override
-            protected Void doInBackground(Void... voids) {
-                FileUtils.copyDatabaseToExternalStorage();
+            protected String doInBackground(Void... voids) {
                 try {
                     File dest = FileUtils.creatImagesFolderExternalStorage();
                     org.apache.commons.io.FileUtils.copyDirectory(FileUtils.getImageDir(getApplicationContext()), dest);
+                    FileUtils.copyDatabaseToExternalStorage();
+                    return dest.getPath();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    return null;
                 }
-                return null;
+
             }
 
             @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
+            protected void onPostExecute(String result) {
+                super.onPostExecute(result);
                 Toast.makeText(UserListActivity.this, "Copy finished", Toast.LENGTH_SHORT).show();
+                if (!TextUtils.isEmpty(result)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(UserListActivity.this);
+                    builder.setMessage("Backup data at location: " + result)
+                            .setCancelable(false)
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    //do things
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
             }
         }.execute();
     }

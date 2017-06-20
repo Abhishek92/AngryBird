@@ -89,8 +89,10 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
             holder.binding.avatarImg.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(user.getUserImagePath());
-                    imageDialogFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), ImageDialogFragment.TAG);
+                    if (!TextUtils.isEmpty(user.getUserImagePath())) {
+                        ImageDialogFragment imageDialogFragment = ImageDialogFragment.getInstance(user.getUserImagePath());
+                        imageDialogFragment.show(((AppCompatActivity) mContext).getSupportFragmentManager(), ImageDialogFragment.TAG);
+                    }
                 }
             });
             holder.binding.title.setText(String.format("%s. %s %s %s", user.getAliasNo(), user.getFirstName(), user.getMiddleName(), user.getLastName()));

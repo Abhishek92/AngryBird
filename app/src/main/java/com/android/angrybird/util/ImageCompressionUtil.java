@@ -42,7 +42,7 @@ public class ImageCompressionUtil {
 
         Log.e(TAG, "Compression needed at >>>>>>>>" + filePath);
 
-        Bitmap scaledBitmap = null;
+        /*Bitmap scaledBitmap = null;
 
         BitmapFactory.Options options = new BitmapFactory.Options();
 
@@ -143,15 +143,14 @@ public class ImageCompressionUtil {
             scaledBitmap = Bitmap.createBitmap(scaledBitmap, 0, 0, scaledBitmap.getWidth(), scaledBitmap.getHeight(), matrix, true);
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
 
         FileOutputStream out = null;
         String filename = getOutputMediaFile().getPath();
         try {
             out = new FileOutputStream(filename);
-
             //          write the compressed bitmap at the destination specified by filename.
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
+            //scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
