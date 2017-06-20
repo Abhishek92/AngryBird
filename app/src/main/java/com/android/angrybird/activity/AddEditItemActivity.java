@@ -1,6 +1,8 @@
 package com.android.angrybird.activity;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -19,7 +21,7 @@ import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.databinding.ActivityAddEditItemBinding;
 import com.android.angrybird.fragment.DatePickerFragment;
 import com.android.angrybird.util.DateTimeUtil;
-import com.android.angrybird.util.ImageCompressionUtil;
+import com.android.angrybird.util.FileUtils;
 import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
 
@@ -261,14 +263,28 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     @Override
     protected void onLoadImage(final String filePath) {
         new AsyncTask<Void, Void, String>() {
+
+            private ProgressDialog mProgressDialog;
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                mProgressDialog = new ProgressDialog(AddEditItemActivity.this);
+                mProgressDialog.setMessage("Please wait...");
+                mProgressDialog.setCancelable(false);
+                mProgressDialog.show();
+            }
+
             @Override
             protected String doInBackground(Void... voids) {
-                return ImageCompressionUtil.getInstance(AddEditItemActivity.this).compressImage(filePath);
+                return FileUtils.storeImage(AddEditItemActivity.this, BitmapFactory.decodeFile(filePath));
             }
 
             @Override
             protected void onPostExecute(String s) {
                 super.onPostExecute(s);
+                if (mProgressDialog.isShowing())
+                    mProgressDialog.cancel();
                 mImageFilePath = s;
                 mImageList.add(s);
                 addMultipleImages();
