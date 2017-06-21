@@ -19,13 +19,12 @@ public enum DBManager {
         DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "angrybird-db");
         Database db = helper.getWritableDb();
         daoSession = new DaoMaster(db).newSession();
-        if(FileUtils.checkIfDbExist())
+        if (FileUtils.checkIfDbExist() && !FileUtils.checkIfImageDirExist(context))
         {
             FileUtils.copyDatabaseToInternalStorage(context);
-        }
-        if (!FileUtils.checkIfImageDirExist(context)) {
             org.apache.commons.io.FileUtils.copyDirectory(FileUtils.creatImagesFolderExternalStorage(), FileUtils.createImageDir(context));
         }
+
     }
 
     public DaoSession getDaoSession()

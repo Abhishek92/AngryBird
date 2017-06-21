@@ -62,6 +62,8 @@ public class FileUtils {
     public static final String MIME_TYPE_APP = "application/*";
     public static final String LOCAL_STORAGE = "com.ranosys.mapmoment.documents";
     public static final String HIDDEN_PREFIX = ".";
+
+    public static final String IMAGE_DIR_NAME = "AngryBirdImages";
     /**
      * TAG for log messages.
      */
@@ -571,12 +573,16 @@ public class FileUtils {
         }
     }
 
+    public static boolean checkIfDbExistInternalStorage(Context context) {
+        return context.getApplicationContext().getDatabasePath("angrybird-db").exists();
+    }
+
     public static void copyDatabaseToInternalStorage(Context context)
     {
         try {
 
             File sd = Environment.getExternalStorageDirectory();
-            File currentDB = new File(sd, "angrybird-db");
+            File currentDB = new File(sd, "/AngryBirdData/angrybird-db");
             InputStream mInput = new FileInputStream(currentDB);
             String outFileName = String.valueOf(context.getApplicationContext().getDatabasePath("angrybird-db"));
             OutputStream mOutput = new FileOutputStream(outFileName);
@@ -619,9 +625,10 @@ public class FileUtils {
         }*/
     }
 
+
     public static File createImageDir(Context context)
     {
-        File mydir = context.getDir("AngryBirdImages", Context.MODE_PRIVATE); //Creating an internal dir;
+        File mydir = new File(context.getFilesDir(), IMAGE_DIR_NAME); //Creating an internal dir;
         if (!mydir.exists())
         {
             mydir.mkdirs();
@@ -631,13 +638,17 @@ public class FileUtils {
     }
 
     public static boolean checkIfImageDirExist(Context context) {
-        File mydir = context.getDir("AngryBirdImages", Context.MODE_PRIVATE); //Creating an internal dir;
-        return mydir.exists();
+
+        return new File(context.getFilesDir(), IMAGE_DIR_NAME).exists();
+
     }
 
     public static File getImageDir(Context context)
     {
-        return context.getDir("AngryBirdImages", Context.MODE_PRIVATE);
+        File imageDir = new File(context.getFilesDir(), IMAGE_DIR_NAME);
+        if (!imageDir.exists())
+            imageDir.mkdir();
+        return imageDir;
     }
 
     public static String storeImage(Context context, Bitmap image) {
@@ -660,7 +671,8 @@ public class FileUtils {
         // Create a media file name
         File mediaFile;
         String mImageName = System.currentTimeMillis()+".png";
-        mediaFile = new File(context.getDir("AngryBirdImages", Context.MODE_PRIVATE) + File.separator + mImageName);
+        createImageDir(context);
+        mediaFile = new File(context.getFilesDir() + "/AngryBirdImages" + File.separator + mImageName);
         return mediaFile;
     }
 
@@ -678,7 +690,7 @@ public class FileUtils {
     public static boolean checkIfDbExist()
     {
         File extStore = Environment.getExternalStorageDirectory();
-        File myFile = new File(extStore.getAbsolutePath() + "/angrybird-db");
+        File myFile = new File(extStore.getAbsolutePath() + "/AngryBirdData/angrybird-db");
         return myFile.exists();
     }
 

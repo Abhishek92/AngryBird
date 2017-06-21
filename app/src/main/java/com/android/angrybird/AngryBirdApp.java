@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.android.angrybird.prefs.PreferenceUtil;
 import com.android.angrybird.util.ApplicationLifeCycleHandler;
-import com.android.angrybird.util.FileUtils;
 import com.crashlytics.android.Crashlytics;
 
 import io.fabric.sdk.android.Fabric;
@@ -31,7 +30,7 @@ public class AngryBirdApp extends Application {
         ApplicationLifeCycleHandler handler = new ApplicationLifeCycleHandler();
         registerActivityLifecycleCallbacks(handler);
         registerComponentCallbacks(handler);
-        FileUtils.createImageDir(getApplicationContext());
+        //FileUtils.createImageDir(getApplicationContext());
 
 
     }

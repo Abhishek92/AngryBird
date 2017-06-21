@@ -114,7 +114,7 @@ public class PdfCreator {
         share.setAction(Intent.ACTION_SEND);
         share.setType("application/pdf");
         share.putExtra(Intent.EXTRA_STREAM, uri);
-        mContext.startActivity(share);
+        mContext.startActivity(Intent.createChooser(share, "Share to"));
     }
 
     public void createAndSharePdf() {
@@ -215,7 +215,7 @@ public class PdfCreator {
 
         addColumn(pdfPTable, String.valueOf(item.getAliasNo()));
         addColumn(pdfPTable, item.getParticular());
-        addColumn(pdfPTable, item.getCreatedDate());
+        addColumn(pdfPTable, item.getDate());
         addColumn(pdfPTable, item.getDebitAmount());
         addColumn(pdfPTable, item.getCreditAmount());
         addColumn(pdfPTable, item.getDebitWeight());
@@ -314,7 +314,7 @@ public class PdfCreator {
             Item item = itemList.get(i);
             addColumn(pdfPTable, String.valueOf(item.getAliasNo()));
             addColumn(pdfPTable, item.getParticular());
-            addColumn(pdfPTable, item.getCreatedDate());
+            addColumn(pdfPTable, item.getDate());
             addColumn(pdfPTable, item.getDebitAmount());
             addColumn(pdfPTable, item.getCreditAmount());
             addColumn(pdfPTable, item.getDebitWeight());
