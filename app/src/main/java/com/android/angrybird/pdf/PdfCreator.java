@@ -157,12 +157,7 @@ public class PdfCreator {
                 if (TextUtils.isEmpty(result)) {
                     Toast.makeText(mContext, "Error generating pdf..", Toast.LENGTH_SHORT).show();
                 } else {
-                    Uri uri = Uri.parse(FILE_NAME);
-                    Intent share = new Intent();
-                    share.setAction(Intent.ACTION_SEND);
-                    share.setType("application/pdf");
-                    share.putExtra(Intent.EXTRA_STREAM, uri);
-                    mContext.startActivity(share);
+                    sharePdf(FILE_NAME);
                 }
             }
         }.execute(userId);
