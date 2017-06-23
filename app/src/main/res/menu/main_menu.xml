@@ -14,5 +14,11 @@
         android:title="File copy"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/change_password"
+        android:icon="@drawable/ic_file_upload_black_24dp"
+        android:title="Change password"
+        app:showAsAction="never" />
+
 
 </menu>

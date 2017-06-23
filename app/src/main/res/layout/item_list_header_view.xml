@@ -16,7 +16,7 @@
             android:gravity="center"
             android:paddingBottom="10dp"
             android:paddingTop="10dp"
-            android:text="S.No"
+            android:text="Alias No"
             android:textColor="@android:color/black"
             android:textSize="14sp" />
 

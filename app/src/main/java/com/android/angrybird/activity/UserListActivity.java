@@ -107,6 +107,8 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
         if(item.getItemId() == R.id.copy_db)
         {
             copyDbToExternalStorage();
+        } else if (item.getItemId() == R.id.change_password) {
+            MainActivity.startActivity(this);
         }
         return super.onOptionsItemSelected(item);
     }

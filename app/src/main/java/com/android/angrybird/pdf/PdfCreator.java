@@ -21,6 +21,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
 
@@ -109,12 +110,11 @@ public class PdfCreator {
     }
 
     private void sharePdf(String fileName) {
-        Uri uri = Uri.parse(fileName);
-        Intent share = new Intent();
-        share.setAction(Intent.ACTION_SEND);
-        share.setType("application/pdf");
-        share.putExtra(Intent.EXTRA_STREAM, uri);
-        mContext.startActivity(Intent.createChooser(share, "Share to"));
+        File file = new File(fileName);
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(file), "application/pdf");
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        mContext.startActivity(Intent.createChooser(intent, "Open pdf"));
     }
 
     public void createAndSharePdf() {

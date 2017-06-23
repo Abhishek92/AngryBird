@@ -37,6 +37,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:hint="Particular"
+                android:inputType="textCapSentences"
                 android:maxLength="255"
                 android:maxLines="4"
                 android:singleLine="true" />

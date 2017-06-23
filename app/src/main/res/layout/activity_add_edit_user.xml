@@ -71,6 +71,7 @@
                     android:drawableLeft="@drawable/ic_perm_identity_black_24dp"
                     android:drawablePadding="8dp"
                     android:hint="First Name"
+                    android:inputType="textCapSentences"
                     android:singleLine="true" />
 
                 <EditText
@@ -81,6 +82,7 @@
                     android:drawableLeft="@drawable/ic_perm_identity_black_24dp"
                     android:drawablePadding="8dp"
                     android:hint="Last Name"
+                    android:inputType="textCapSentences"
                     android:singleLine="true" />
 
                 <EditText
@@ -91,6 +93,7 @@
                     android:drawableLeft="@drawable/ic_perm_identity_black_24dp"
                     android:drawablePadding="8dp"
                     android:hint="Middle Name"
+                    android:inputType="textCapSentences"
                     android:singleLine="true" />
 
                 <EditText
@@ -159,6 +162,7 @@
                     android:drawableLeft="@drawable/ic_place_black_24dp"
                     android:drawablePadding="8dp"
                     android:hint="Address"
+                    android:inputType="textCapSentences"
                     android:maxLength="255"
                     android:maxLines="4" />
 

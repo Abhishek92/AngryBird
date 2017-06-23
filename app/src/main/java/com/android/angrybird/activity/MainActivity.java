@@ -2,6 +2,8 @@ package com.android.angrybird.activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 import com.android.angrybird.R;
 import com.android.angrybird.database.Admin;
 import com.android.angrybird.database.DBManager;
+import com.android.angrybird.fragment.ChangePasswordFragment;
 import com.android.angrybird.fragment.RegisterPinFragment;
 import com.android.angrybird.fragment.ValidatePinFragment;
 import com.android.angrybird.prefs.PreferenceUtil;
@@ -28,6 +31,13 @@ public class MainActivity extends AppCompatActivity {
 
 
     private static final int REQUEST_PERMISSION_STORAGE = 2001;
+    private static final String KEY_FROM_CHANGE_PASSWORD = "KEY_FROM_CHANGE_PASSWORD";
+
+    public static void startActivity(Context context) {
+        Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra(KEY_FROM_CHANGE_PASSWORD, true);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,16 +48,18 @@ public class MainActivity extends AppCompatActivity {
         boolean readPermission = (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED);
 
-        if (!(writePermission && readPermission)) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
-                    REQUEST_PERMISSION_STORAGE);
-        }
-        else
+        if (getIntent().getBooleanExtra(KEY_FROM_CHANGE_PASSWORD, false))
         {
-            initDatabase();
+            openFragment(ChangePasswordFragment.getInstance());
+        } else {
+            if (!(writePermission && readPermission)) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE},
+                        REQUEST_PERMISSION_STORAGE);
+            } else {
+                initDatabase();
+            }
         }
-
     }
 
     private void openFragment(Fragment fragment)
