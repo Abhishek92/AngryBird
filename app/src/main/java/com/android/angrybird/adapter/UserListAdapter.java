@@ -95,7 +95,7 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.ViewHo
                     }
                 }
             });
-            holder.binding.title.setText(String.format("%s. %s %s %s", user.getAliasNo(), user.getFirstName(), user.getMiddleName(), user.getLastName()));
+            holder.binding.title.setText(String.format("%s %s %s %s", user.getAliasNo() == 0 ? "" : user.getAliasNo() + ".", user.getFirstName(), user.getMiddleName(), user.getLastName()));
             holder.binding.contact.setText("Contact no: ".concat(user.getContactOne()));
             holder.binding.address.setText("Address: ".concat(user.getAddress()));
             setUpPopupMenu(holder, user);

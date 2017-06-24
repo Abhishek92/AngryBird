@@ -77,7 +77,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         });
 
         long itemId = item.getAliasNo();
-        holder.binding.sNoTxt.setText(String.valueOf(itemId));
+        holder.binding.sNoTxt.setText(itemId == 0 ? "" : String.valueOf(itemId));
         double debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Double.parseDouble(item.getDebitAmount());
         double creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Double.parseDouble(item.getCreditAmount());
         holder.binding.balanceTxt.setText(String.format("%.2f", debitAmt - creditAmt));
