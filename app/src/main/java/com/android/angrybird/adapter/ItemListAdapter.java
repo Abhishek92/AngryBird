@@ -34,11 +34,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
 
     private Context mContext;
     private List<Item> mItemList;
+    private List<Item> mBackupItemList;
     private OnItemActionListener mListener;
     public ItemListAdapter(Context context, List<Item> itemList)
     {
         mContext = context;
-        mItemList = new ArrayList<>(itemList);
+        mItemList = itemList;
+        mBackupItemList = new ArrayList<>(itemList);
     }
 
     public void setOnItemClickListener(OnItemActionListener listener)
@@ -121,6 +123,24 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     @Override
     public int getItemCount() {
         return mItemList.size();
+    }
+
+    public void setFilter(String queryText) {
+        mItemList = new ArrayList<>();
+        queryText = queryText.toLowerCase();
+        for (Item item : mBackupItemList) {
+            String aliasNo = item.getAliasNo() == null ? String.valueOf("0") : String.valueOf(item.getAliasNo());
+            if (aliasNo.toLowerCase().contains(queryText)
+                    || item.getParticular().toLowerCase().contains(queryText))
+                mItemList.add(item);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void flushFilter() {
+        mItemList = new ArrayList<>();
+        mItemList.addAll(mBackupItemList);
+        notifyDataSetChanged();
     }
 
     public interface OnItemActionListener {

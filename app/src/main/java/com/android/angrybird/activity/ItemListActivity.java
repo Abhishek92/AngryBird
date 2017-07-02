@@ -1,11 +1,16 @@
 package com.android.angrybird.activity;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -20,6 +25,12 @@ import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ItemListActivity extends BaseActivity<ActivityItemListBinding> implements ItemListAdapter.OnItemActionListener {
@@ -27,6 +38,8 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
     public static final String KEY_USER_DATA = "KEY_USER_DATA";
     private ActivityItemListBinding viewBinding;
     private User user;
+    private ItemListAdapter mAdapter;
+    private List<Item> mItemList = new ArrayList<>();
 
     @Override
     protected void onCreateCustom(ActivityItemListBinding viewBinding) {
@@ -70,10 +83,64 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_item_list, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(false);
+        searchView.setQueryHint(getResources().getString(R.string.query_hint_item));
+
+        SearchView.OnQueryTextListener textChangeListener = new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (mAdapter != null && !TextUtils.isEmpty(newText))
+                    mAdapter.setFilter(newText);
+                else if (mAdapter != null && TextUtils.isEmpty(newText))
+                    mAdapter.flushFilter();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (mAdapter != null && !TextUtils.isEmpty(query))
+                    mAdapter.setFilter(query);
+                else if (mAdapter != null && TextUtils.isEmpty(query))
+                    mAdapter.flushFilter();
+                return true;
+            }
+        };
+        searchView.setOnQueryTextListener(textChangeListener);
+        return true;
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home)
             finish();
+        else if (item.getItemId() == R.id.sort_list) {
+            sortItemList();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void sortItemList() {
+        Collections.sort(mItemList, new Comparator<Item>() {
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+            @Override
+            public int compare(Item o1, Item o2) {
+                try {
+                    return dateFormat.parse(o2.getDate()).compareTo(dateFormat.parse(o1.getDate()));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
+
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -167,9 +234,10 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
         protected void onPostExecute(List<Item> itemList) {
             super.onPostExecute(itemList);
             setHeaderAmountValue(itemList);
-            ItemListAdapter adapter = new ItemListAdapter(ItemListActivity.this, itemList);
-            adapter.setOnItemClickListener(ItemListActivity.this);
-            viewBinding.itemListRv.setAdapter(adapter);
+            mItemList = itemList;
+            mAdapter = new ItemListAdapter(ItemListActivity.this, itemList);
+            mAdapter.setOnItemClickListener(ItemListActivity.this);
+            viewBinding.itemListRv.setAdapter(mAdapter);
         }
     }
 }
