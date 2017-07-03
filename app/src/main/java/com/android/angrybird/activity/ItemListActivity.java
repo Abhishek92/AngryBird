@@ -21,6 +21,7 @@ import com.android.angrybird.database.Item;
 import com.android.angrybird.database.ItemAsset;
 import com.android.angrybird.database.User;
 import com.android.angrybird.databinding.ActivityItemListBinding;
+import com.android.angrybird.util.Utils;
 import com.bumptech.glide.Glide;
 
 import org.parceler.Parcels;
@@ -127,20 +128,22 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
     }
 
     private void sortItemList() {
-        Collections.sort(mItemList, new Comparator<Item>() {
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        if (Utils.listNotNull(mItemList)) {
+            Collections.sort(mItemList, new Comparator<Item>() {
+                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-            @Override
-            public int compare(Item o1, Item o2) {
-                try {
-                    return dateFormat.parse(o2.getDate()).compareTo(dateFormat.parse(o1.getDate()));
-                } catch (ParseException e) {
-                    throw new IllegalArgumentException(e);
+                @Override
+                public int compare(Item o1, Item o2) {
+                    try {
+                        return dateFormat.parse(o2.getDate()).compareTo(dateFormat.parse(o1.getDate()));
+                    } catch (ParseException e) {
+                        return 0;
+                    }
                 }
-            }
-        });
+            });
 
-        mAdapter.sortList(mItemList);
+            mAdapter.sortList(mItemList);
+        }
     }
 
     @Override
