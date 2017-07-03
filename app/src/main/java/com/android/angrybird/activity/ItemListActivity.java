@@ -140,7 +140,7 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
             }
         });
 
-        mAdapter.notifyDataSetChanged();
+        mAdapter.sortList(mItemList);
     }
 
     @Override

@@ -50,7 +50,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     private String mImageFilePath;
     private Long userId;
     private Item item;
-    private Long mAliasNo;
+    private String mAliasNo;
     private ActionBar mActionBar;
     private List<ItemAsset> mItemAssetList = new ArrayList<>();
     private List<String> mImageList = new ArrayList<>();
@@ -120,7 +120,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             viewBinding.debitAmtEt.setText(item.getDebitAmount());
             viewBinding.creditWeightEt.setText(item.getCrediWeight());
             viewBinding.debitWeightEt.setText(item.getDebitWeight());
-            viewBinding.aliasEt.setText(String.valueOf(item.getAliasNo()));
+            viewBinding.aliasEt.setText(item.getAliasNo());
             setImagesForEdit();
         }
         else {
@@ -246,7 +246,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
         mDebitAmt = viewBinding.debitAmtEt.getText().toString();
         mCreditWgt = viewBinding.creditWeightEt.getText().toString();
         mDebitWgt = viewBinding.debitWeightEt.getText().toString();
-        mAliasNo = !TextUtils.isEmpty(viewBinding.aliasEt.getText().toString()) ? Long.parseLong(viewBinding.aliasEt.getText().toString()) : 0;
+        mAliasNo = viewBinding.aliasEt.getText().toString();
 
         if (TextUtils.isEmpty(mParticular)) {
             Toast.makeText(this, "Particular is empty", Toast.LENGTH_SHORT).show();

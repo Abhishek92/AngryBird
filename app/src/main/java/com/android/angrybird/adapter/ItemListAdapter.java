@@ -40,7 +40,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
     {
         mContext = context;
         mItemList = itemList;
-        mBackupItemList = new ArrayList<>(itemList);
+        mBackupItemList = itemList;
     }
 
     public void setOnItemClickListener(OnItemActionListener listener)
@@ -52,6 +52,12 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         ItemListLayoutBinding binding =
                 DataBindingUtil.inflate(LayoutInflater.from(parent.getContext()), R.layout.item_list_layout, parent, false);
         return new ItemListAdapter.ViewHolder(binding);
+    }
+
+    public void sortList(List<Item> itemList) {
+        mItemList = itemList;
+        mBackupItemList = itemList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -78,8 +84,8 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             }
         });
 
-        long itemId = item.getAliasNo();
-        holder.binding.sNoTxt.setText(itemId == 0 ? "" : String.valueOf(itemId));
+
+        holder.binding.sNoTxt.setText(!TextUtils.isEmpty(item.getAliasNo()) ? item.getAliasNo() : "");
         double debitAmt = TextUtils.isEmpty(item.getDebitAmount()) ? 0 : Double.parseDouble(item.getDebitAmount());
         double creditAmt = TextUtils.isEmpty(item.getCreditAmount()) ? 0 : Double.parseDouble(item.getCreditAmount());
         holder.binding.balanceTxt.setText(String.format("%.2f", debitAmt - creditAmt));
@@ -129,7 +135,7 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         mItemList = new ArrayList<>();
         queryText = queryText.toLowerCase();
         for (Item item : mBackupItemList) {
-            String aliasNo = item.getAliasNo() == null ? String.valueOf("0") : String.valueOf(item.getAliasNo());
+            String aliasNo = !TextUtils.isEmpty(item.getAliasNo()) ? item.getAliasNo() : "";
             if (aliasNo.toLowerCase().contains(queryText)
                     || item.getParticular().toLowerCase().contains(queryText))
                 mItemList.add(item);

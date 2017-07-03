@@ -208,7 +208,7 @@ public class PdfCreator {
 
         pdfPTable.setHeaderRows(1);
 
-        addColumn(pdfPTable, String.valueOf(item.getAliasNo()));
+        addColumn(pdfPTable, item.getAliasNo());
         addColumn(pdfPTable, item.getParticular());
         addColumn(pdfPTable, item.getDate());
         addColumn(pdfPTable, item.getDebitAmount());
@@ -307,7 +307,7 @@ public class PdfCreator {
 
         for (int i = 0; i < itemList.size(); i++) {
             Item item = itemList.get(i);
-            addColumn(pdfPTable, String.valueOf(item.getAliasNo()));
+            addColumn(pdfPTable, item.getAliasNo());
             addColumn(pdfPTable, item.getParticular());
             addColumn(pdfPTable, item.getDate());
             addColumn(pdfPTable, item.getDebitAmount());
