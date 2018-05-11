@@ -174,7 +174,6 @@
                     android:layout_marginTop="8dp"
                     android:hint="Alias No"
                     android:inputType="number"
-                    android:maxLength="4"
                     android:singleLine="true" />
 
                 <Button

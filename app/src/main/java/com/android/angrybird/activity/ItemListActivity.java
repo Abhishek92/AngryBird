@@ -129,21 +129,24 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
 
     private void sortItemList() {
         if (Utils.listNotNull(mItemList)) {
-            Collections.sort(mItemList, new Comparator<Item>() {
-                DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
-
-                @Override
-                public int compare(Item o1, Item o2) {
-                    try {
-                        return dateFormat.parse(o2.getDate()).compareTo(dateFormat.parse(o1.getDate()));
-                    } catch (ParseException e) {
-                        return 0;
-                    }
-                }
-            });
-
+            sortUserItems();
             mAdapter.sortList(mItemList);
         }
+    }
+
+    private void sortUserItems() {
+        Collections.sort(mItemList, new Comparator<Item>() {
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+            @Override
+            public int compare(Item o1, Item o2) {
+                try {
+                    return dateFormat.parse(o1.getDate()).compareTo(dateFormat.parse(o2.getDate()));
+                } catch (ParseException e) {
+                    return 0;
+                }
+            }
+        });
     }
 
     @Override
@@ -238,9 +241,12 @@ public class ItemListActivity extends BaseActivity<ActivityItemListBinding> impl
             super.onPostExecute(itemList);
             setHeaderAmountValue(itemList);
             mItemList = itemList;
+            sortUserItems();
             mAdapter = new ItemListAdapter(ItemListActivity.this, itemList);
             mAdapter.setOnItemClickListener(ItemListActivity.this);
             viewBinding.itemListRv.setAdapter(mAdapter);
+            viewBinding.itemListRv.scrollToPosition(mItemList.size() - 1);
+
         }
     }
 }

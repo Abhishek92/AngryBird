@@ -111,7 +111,6 @@
                 android:layout_marginTop="10dp"
                 android:hint="Alias No"
                 android:inputType="number"
-                android:maxLength="4"
                 android:singleLine="true" />
             <!--<ImageView
                 android:id="@+id/item_image"

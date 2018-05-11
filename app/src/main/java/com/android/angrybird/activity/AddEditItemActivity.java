@@ -133,7 +133,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     {
         if (validate()) {
             item.setModifiedDate(DateTimeUtil.getCurrentDateTime());
-            item.setDate(mDate);
+            item.setDate(getDate());
             item.setParticular(mParticular);
             item.setStatus(false);
             item.setCreditAmount(mCreditAmt);
@@ -153,7 +153,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             item.setUserId(userId);
             item.setCreatedDate(DateTimeUtil.getCurrentDateTime());
             item.setModifiedDate("");
-            item.setDate(mDate);
+            item.setDate(getDate());
             item.setParticular(mParticular);
             item.setStatus(false);
             item.setCreditAmount(mCreditAmt);
@@ -171,6 +171,11 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
             insertImages(id);
             showAddMoreDialog();
         }
+    }
+
+    private String getDate() {
+        mDate = TextUtils.isEmpty(mDate) ? "01-01-1901" : mDate;
+        return mDate;
     }
 
     private void showAddMoreDialog() {
