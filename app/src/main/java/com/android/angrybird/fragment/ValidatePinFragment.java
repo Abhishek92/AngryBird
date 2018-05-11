@@ -16,6 +16,7 @@ import com.android.angrybird.activity.UserListActivity;
 import com.android.angrybird.database.Admin;
 import com.android.angrybird.database.DBManager;
 import com.android.angrybird.databinding.FragmentValidatePinBinding;
+import com.android.angrybird.util.UpdateEmptyItemDateIntentService;
 import com.android.angrybird.util.Utils;
 
 import java.util.List;
@@ -48,6 +49,8 @@ public class ValidatePinFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        //Update item date in database if empty
+        getContext().startService(new Intent(getActivity(), UpdateEmptyItemDateIntentService.class));
         return inflater.inflate(R.layout.fragment_validate_pin, container, false);
     }
 

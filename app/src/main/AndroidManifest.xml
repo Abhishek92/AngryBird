@@ -43,14 +43,19 @@
         <meta-data
             android:name="android.app.searchable"
             android:resource="@xml/searchable" />
+
         <activity
             android:name=".activity.ScrollingActivity"
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="c42d5b85b9075bb61b9d08725420f6bbdb81249f" />
 
+        <service
+            android:name=".util.UpdateEmptyItemDateIntentService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

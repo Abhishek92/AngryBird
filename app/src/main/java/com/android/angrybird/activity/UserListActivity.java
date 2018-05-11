@@ -238,6 +238,8 @@ public class UserListActivity extends BaseActivity<ActivityUserListBinding> impl
                 }
             }
         }
+
+
     }
 
     private class GetAllUserList extends AsyncTask<Void, Void, List<User>> {

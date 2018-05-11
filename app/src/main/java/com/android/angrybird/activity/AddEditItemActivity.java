@@ -174,7 +174,7 @@ public class AddEditItemActivity extends BaseActivity<ActivityAddEditItemBinding
     }
 
     private String getDate() {
-        mDate = TextUtils.isEmpty(mDate) ? "01-01-1901" : mDate;
+        mDate = TextUtils.isEmpty(mDate) ? Utils.DEFAULT_DATE : mDate;
         return mDate;
     }
 

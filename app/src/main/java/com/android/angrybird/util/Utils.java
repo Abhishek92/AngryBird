@@ -11,6 +11,7 @@ import java.util.List;
  */
 
 public final class Utils {
+    public static final String DEFAULT_DATE = "01-01-1901";
     private Utils()
     {
 
